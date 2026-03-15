@@ -852,11 +852,29 @@ function buildDField(cx,cy,r,D){const df=new Float32Array(N*N);for(let y=0;y<N;y
 function initC(mode,cx,cy,r){const C=new Float32Array(N*N);if(mode==='left_boundary'){for(let y=0;y<N;y++)C[y*N]=1;}else if(mode==='point'){C[cy*N+cx]=1;}else if(mode==='ring'){const rv=r+5;for(let y=0;y<N;y++)for(let x=0;x<N;x++)if(Math.abs(Math.sqrt((x-cx)**2+(y-cy)**2)-rv)<2)C[y*N+x]=1;}return C;}
 function pdeChunk(C,Df,rho,dx,dt,lam,k,steps,mode){const C2=new Float32Array(N*N);for(let s=0;s<steps;s++){for(let y=1;y<N-1;y++)for(let x=1;x<N-1;x++){const i=y*N+x,lap=(C[(y-1)*N+x]+C[(y+1)*N+x]+C[y*N+(x-1)]+C[y*N+(x+1)]-4*C[i])/(dx*dx);C2[i]=Math.max(0,C[i]+dt*Df[i]*lap-dt*lam*C[i]-dt*k*rho[i]*C[i]);}if(mode==='left_boundary'){for(let y=0;y<N;y++){C2[y*N]=1;C2[y*N+N-1]=0;}for(let x=0;x<N;x++){C2[x]=0;C2[(N-1)*N+x]=0;}}C.set(C2);}}
 function radialCurve(C,cx,cy){const maxR=Math.floor(N/2),sum=new Float64Array(maxR),cnt=new Int32Array(maxR);for(let y=0;y<N;y++)for(let x=0;x<N;x++){const d=Math.floor(Math.sqrt((x-cx)**2+(y-cy)**2));if(d<maxR){sum[d]+=C[y*N+x];cnt[d]++;}}return sum.map((v,i)=>cnt[i]>0?v/cnt[i]:0);}
-function calcMetrics(C,cx,cy,r){let ts=0,tc=0,maxC=0;for(let y=0;y<N;y++)for(let x=0;x<N;x++){const v=C[y*N+x];if(v>maxC)maxC=v;if(Math.sqrt((x-cx)**2+(y-cy)**2)<=r){ts+=v;tc++;}}const curve=radialCurve(C,cx,cy),half=maxC/2;
-  // depth50: furthest radial distance from center where mean concentration >= half-max
-  let depth50=0;
-  for(let i=0;i<curve.length;i++)if(curve[i]>=half)depth50=i;
-  const covCount=Array.from(C).filter((v,i)=>{const y=Math.floor(i/N),x=i%N;return Math.sqrt((x-cx)**2+(y-cy)**2)<=r&&v>.1;}).length;return{tumorAvg:tc>0?(ts/tc).toFixed(3):'0.000',maxC:maxC.toFixed(3),depth50,coverage:tc>0?(covCount/tc*100).toFixed(1):'0.0'};}
+function calcMetrics(C,cx,cy,r){
+  let ts=0,tc=0,maxC=0;
+  for(let y=0;y<N;y++)for(let x=0;x<N;x++){
+    const v=C[y*N+x];if(v>maxC)maxC=v;
+    if(Math.sqrt((x-cx)**2+(y-cy)**2)<=r){ts+=v;tc++;}
+  }
+  // x-direction penetration: find rightmost column inside tumor where row-average >= 10% max
+  let depth=0;
+  const xStart=Math.max(0,cx-r), xEnd=Math.min(N-1,cx+r);
+  for(let x=xStart;x<=xEnd;x++){
+    let colSum=0,colCnt=0;
+    for(let y=0;y<N;y++){
+      if(Math.sqrt((x-cx)**2+(y-cy)**2)<=r){colSum+=C[y*N+x];colCnt++;}
+    }
+    if(colCnt>0&&colSum/colCnt>=maxC*0.1) depth=x-cx+r;
+  }
+  const covCount=Array.from(C).filter((v,i)=>{
+    const y=Math.floor(i/N),x=i%N;
+    return Math.sqrt((x-cx)**2+(y-cy)**2)<=r&&v>.1;
+  }).length;
+  const curve=radialCurve(C,cx,cy);
+  return{tumorAvg:tc>0?(ts/tc).toFixed(3):'0.000',maxC:maxC.toFixed(3),depth50:depth,coverage:tc>0?(covCount/tc*100).toFixed(1):'0.0',curve};
+}
 
 /* animation state */
 let animFrames=[], animIdx=0, animTimer=null, animParams=null;
@@ -868,7 +886,7 @@ async function runSim(){
   stopAnim();
   animFrames=[];
 
-  const p=getParams(),cx=N/2,cy=N/2,dx=1/N,dt=.9*dx*dx/(4*p.D+1e-10);
+  const p=getParams(),cx=Math.floor(N/3),cy=N/2,dx=1/N,dt=.9*dx*dx/(4*p.D+1e-10);
   const C=initC(p.mode,cx,cy,p.r),rho=buildRho(cx,cy,p.r),Df=buildDField(cx,cy,p.r,p.D);
   const TOTAL_FRAMES=20;
   const stepsPerFrame=Math.max(1,Math.floor(p.steps/TOTAL_FRAMES));
@@ -1032,7 +1050,7 @@ function renderResults(){
   if(!simResult)return;
   document.getElementById('results-empty').style.display='none';
   document.getElementById('results-content').style.display='';
-  const{C,curve,metrics,p}=simResult,cx=N/2,cy=N/2;
+  const{C,curve,metrics,p}=simResult,cx=Math.floor(N/3),cy=N/2;
   document.getElementById('r-drug').textContent=p.drug;
   document.getElementById('r-tumor').textContent=p.tumor;
   document.getElementById('r-tavg').textContent=metrics.tumorAvg;
