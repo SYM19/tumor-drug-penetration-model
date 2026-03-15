@@ -212,6 +212,7 @@
       <button class="active" onclick="switchTab('about')">About</button>
       <button onclick="switchTab('simulation')">Simulation</button>
       <button onclick="switchTab('ai')">AI Drug Input</button>
+      <button onclick="switchTab('compare')">Compare</button>
       <button onclick="switchTab('results')">Results</button>
       <button onclick="switchTab('database')">Drug Database</button>
     </nav>
@@ -553,6 +554,154 @@
       </div>
     </div>
 
+    <!-- COMPARE -->
+    <div id="tab-compare" class="tab-panel">
+      <div class="section">
+        <h1>Drug <span class="accent">Compare</span></h1>
+        <p>Simulate two drugs on the same tumor side-by-side. Compare penetration depth, tumor coverage, and concentration profiles.</p>
+      </div>
+
+      <!-- Shared tumor settings -->
+      <div class="card section">
+        <div class="card-header"><div class="card-icon amber">◉</div><h2 style="margin:0;">Shared tumor settings</h2></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;flex-wrap:wrap;">
+          <div>
+            <label>Tumor type</label>
+            <select id="cmp-tumor">
+              <option value="breast">Breast cancer</option>
+              <option value="pancreatic">Pancreatic cancer</option>
+              <option value="glioma">Glioma</option>
+              <option value="melanoma">Melanoma</option>
+              <option value="colorectal">Colorectal</option>
+            </select>
+          </div>
+          <div>
+            <label>Delivery mode</label>
+            <select id="cmp-mode">
+              <option value="left_boundary">IV Infusion</option>
+              <option value="ring">Vascular ring</option>
+              <option value="point">Intratumoral</option>
+            </select>
+          </div>
+          <div>
+            <label>Steps</label>
+            <select id="cmp-steps">
+              <option value="200">200</option>
+              <option value="400" selected>400</option>
+              <option value="600">600</option>
+              <option value="800">800</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Two drug panels -->
+      <div class="grid-2 section">
+
+        <!-- Drug A -->
+        <div class="card" style="border-top:2px solid var(--blue);">
+          <div class="card-header">
+            <div class="card-icon blue">A</div>
+            <h2 style="margin:0;color:var(--blue);">Drug A</h2>
+          </div>
+          <div style="margin-bottom:.875rem;">
+            <label>Drug preset</label>
+            <select id="cmpA-drug" onchange="loadCmpPreset('A')">
+              <option value="doxorubicin">Doxorubicin</option>
+              <option value="paclitaxel">Paclitaxel</option>
+              <option value="cisplatin">Cisplatin</option>
+              <option value="gemcitabine">Gemcitabine</option>
+              <option value="trastuzumab">Trastuzumab</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+          <div class="slider-row"><span class="slider-name">D · diffusion</span><input type="range" id="cmpA-D" min="1" max="30" step="1" value="8" oninput="syCmp('A','D',this.value)"><span class="slider-val" id="cmpA-vD">0.08</span></div>
+          <div class="slider-row"><span class="slider-name">λ · decay</span><input type="range" id="cmpA-lam" min="1" max="50" step="1" value="5" oninput="syCmp('A','lam',this.value)"><span class="slider-val" id="cmpA-vlam">0.005</span></div>
+          <div class="slider-row"><span class="slider-name">k · uptake</span><input type="range" id="cmpA-k" min="1" max="20" step="1" value="6" oninput="syCmp('A','k',this.value)"><span class="slider-val" id="cmpA-vk">0.06</span></div>
+        </div>
+
+        <!-- Drug B -->
+        <div class="card" style="border-top:2px solid var(--green);">
+          <div class="card-header">
+            <div class="card-icon green">B</div>
+            <h2 style="margin:0;color:var(--green);">Drug B</h2>
+          </div>
+          <div style="margin-bottom:.875rem;">
+            <label>Drug preset</label>
+            <select id="cmpB-drug" onchange="loadCmpPreset('B')">
+              <option value="doxorubicin">Doxorubicin</option>
+              <option value="paclitaxel" selected>Paclitaxel</option>
+              <option value="cisplatin">Cisplatin</option>
+              <option value="gemcitabine">Gemcitabine</option>
+              <option value="trastuzumab">Trastuzumab</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+          <div class="slider-row"><span class="slider-name">D · diffusion</span><input type="range" id="cmpB-D" min="1" max="30" step="1" value="6" oninput="syCmp('B','D',this.value)"><span class="slider-val" id="cmpB-vD">0.06</span></div>
+          <div class="slider-row"><span class="slider-name">λ · decay</span><input type="range" id="cmpB-lam" min="1" max="50" step="1" value="4" oninput="syCmp('B','lam',this.value)"><span class="slider-val" id="cmpB-vlam">0.004</span></div>
+          <div class="slider-row"><span class="slider-name">k · uptake</span><input type="range" id="cmpB-k" min="1" max="20" step="1" value="5" oninput="syCmp('B','k',this.value)"><span class="slider-val" id="cmpB-vk">0.05</span></div>
+        </div>
+      </div>
+
+      <div class="btn-row section" style="margin-top:-.5rem;">
+        <button class="btn btn-primary" id="cmp-run-btn" onclick="runCompare()">▶ Run comparison</button>
+        <button class="btn btn-ghost" onclick="resetCompare()">Reset</button>
+      </div>
+      <div class="progress-wrap" style="margin-bottom:1.5rem;">
+        <div class="progress-track"><div class="progress-fill" id="cmp-prog"></div></div>
+        <div class="status-line" id="cmp-status"></div>
+      </div>
+
+      <!-- Results: heatmaps -->
+      <div class="grid-2 section" id="cmp-results" style="display:none;">
+        <div class="card">
+          <div class="card-header"><div class="card-icon blue">A</div><h2 style="margin:0;color:var(--blue);" id="cmp-title-A">Drug A</h2></div>
+          <div class="canvas-box" style="aspect-ratio:1;"><canvas id="cmp-heatmap-A" width="400" height="400"></canvas></div>
+          <div class="colorbar-row" style="height:28px;margin-top:8px;">
+            <div class="colorbar" style="height:28px;"></div>
+            <div class="colorbar-ticks"><span>1.0</span><span>0.5</span><span>0.0</span></div>
+          </div>
+          <div class="grid-4" style="margin-top:8px;gap:.5rem;">
+            <div class="metric"><div class="metric-label">Avg C</div><div class="metric-value" id="cmpA-avg">—</div></div>
+            <div class="metric"><div class="metric-label">Max C</div><div class="metric-value" id="cmpA-max">—</div></div>
+            <div class="metric"><div class="metric-label">50% depth</div><div class="metric-value" id="cmpA-depth">—</div></div>
+            <div class="metric"><div class="metric-label">Coverage</div><div class="metric-value" id="cmpA-cov">—</div><div class="metric-unit">%</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-icon green">B</div><h2 style="margin:0;color:var(--green);" id="cmp-title-B">Drug B</h2></div>
+          <div class="canvas-box" style="aspect-ratio:1;"><canvas id="cmp-heatmap-B" width="400" height="400"></canvas></div>
+          <div class="colorbar-row" style="height:28px;margin-top:8px;">
+            <div class="colorbar" style="height:28px;"></div>
+            <div class="colorbar-ticks"><span>1.0</span><span>0.5</span><span>0.0</span></div>
+          </div>
+          <div class="grid-4" style="margin-top:8px;gap:.5rem;">
+            <div class="metric"><div class="metric-label">Avg C</div><div class="metric-value" id="cmpB-avg">—</div></div>
+            <div class="metric"><div class="metric-label">Max C</div><div class="metric-value" id="cmpB-max">—</div></div>
+            <div class="metric"><div class="metric-label">50% depth</div><div class="metric-value" id="cmpB-depth">—</div></div>
+            <div class="metric"><div class="metric-label">Coverage</div><div class="metric-value" id="cmpB-cov">—</div><div class="metric-unit">%</div></div>
+          </div>
+        </div>
+
+        <!-- Overlay curve -->
+        <div class="card section" style="grid-column:1/-1;">
+          <div class="card-header"><div class="card-icon">📈</div><h2 style="margin:0;">Penetration curves — overlay</h2></div>
+          <div class="canvas-box"><canvas id="cmp-curve" width="1000" height="220"></canvas></div>
+          <div style="display:flex;gap:16px;margin-top:10px;font-family:var(--mono);font-size:.75rem;">
+            <span style="color:var(--blue);">── Drug A</span>
+            <span style="color:var(--green);">── Drug B</span>
+            <span style="color:rgba(0,229,255,.5);">--- Tumor wall</span>
+          </div>
+        </div>
+
+        <!-- Winner summary -->
+        <div class="card section" style="grid-column:1/-1;" id="cmp-summary">
+          <div class="card-header"><div class="card-icon green">✦</div><h2 style="margin:0;">Comparison summary</h2></div>
+          <div id="cmp-summary-text" style="font-size:.875rem;line-height:1.85;color:var(--text2);"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- AI -->
     <div id="tab-ai" class="tab-panel">
       <div class="section"><h1>AI Drug <span class="accent">Input</span></h1><p>Describe a drug and tumor in plain English. Claude extracts biophysically grounded PDE parameters and loads them into the simulator.</p></div>
@@ -671,7 +820,7 @@ function switchTab(name){
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('#nav button').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
-  const idx=['about','simulation','ai','results','database'].indexOf(name);
+  const idx=['about','simulation','ai','compare','results','database'].indexOf(name);
   document.querySelectorAll('#nav button')[idx].classList.add('active');
   if(name==='results')renderResults();
   if(name==='database')renderDB();
@@ -944,7 +1093,171 @@ function renderDB(){document.getElementById('db-tbody').innerHTML=dbFiltered.map
 function filterDB(){const q=document.getElementById('db-search').value.toLowerCase(),tumor=document.getElementById('db-filter-tumor').value,diff=document.getElementById('db-filter-diff').value;dbFiltered=DB.filter(d=>(!q||d.drug.toLowerCase().includes(q)||d.tumor.includes(q)||d.cls.toLowerCase().includes(q))&&(!tumor||d.tumor===tumor)&&(!diff||d.diff===diff));renderDB();}
 function loadFromDB(idx){const d=DB[idx];setSliders(d);const opt=[...document.getElementById('drug-select').options].find(o=>o.value===d.drug.toLowerCase().replace(/[\s-]/g,'_'));document.getElementById('drug-select').value=opt?opt.value:'custom';document.getElementById('tumor-select').value=d.tumor;switchTab('simulation');}
 
+/* ==========================================================
+   COMPARE MODE
+========================================================== */
+function syCmp(ab,id,v){
+  const fmt={D:(v/100).toFixed(2),lam:(v/1000).toFixed(3),k:(v/100).toFixed(2)};
+  document.getElementById('cmp'+ab+'-v'+id).textContent=fmt[id];
+}
+
+function loadCmpPreset(ab){
+  const drug=document.getElementById('cmp'+ab+'-drug').value;
+  const tumor=document.getElementById('cmp-tumor').value;
+  if(drug==='custom')return;
+  const p=PRESETS[drug+'_'+tumor]||PRESETS[drug+'_breast'];
+  if(!p)return;
+  document.getElementById('cmp'+ab+'-D').value=Math.round(p.D*100);
+  document.getElementById('cmp'+ab+'-lam').value=Math.round(p.lam*1000);
+  document.getElementById('cmp'+ab+'-k').value=Math.round(p.k*100);
+  syCmp(ab,'D',Math.round(p.D*100));
+  syCmp(ab,'lam',Math.round(p.lam*1000));
+  syCmp(ab,'k',Math.round(p.k*100));
+}
+
+function getCmpParams(ab){
+  const tumor=document.getElementById('cmp-tumor').value;
+  const mode=document.getElementById('cmp-mode').value;
+  const steps=parseInt(document.getElementById('cmp-steps').value);
+  const r=DB.find(d=>d.tumor===tumor)?.r||22;
+  return{
+    D:parseFloat(document.getElementById('cmp'+ab+'-D').value)/100,
+    lam:parseFloat(document.getElementById('cmp'+ab+'-lam').value)/1000,
+    k:parseFloat(document.getElementById('cmp'+ab+'-k').value)/100,
+    r, tumor, mode, steps,
+    drug:document.getElementById('cmp'+ab+'-drug').value,
+    label:document.getElementById('cmp'+ab+'-drug').options[document.getElementById('cmp'+ab+'-drug').selectedIndex].text,
+  };
+}
+
+async function runCompare(){
+  const btn=document.getElementById('cmp-run-btn');
+  btn.disabled=true; btn.textContent='⟳ Running…';
+  document.getElementById('cmp-results').style.display='none';
+  document.getElementById('cmp-status').textContent='Running Drug A…';
+
+  const pA=getCmpParams('A'), pB=getCmpParams('B');
+  const cx=N/2, cy=N/2, dx=1/N;
+  const CHUNKS=10;
+
+  // ── Drug A ──
+  const dtA=.9*dx*dx/(4*pA.D+1e-10);
+  const CA=initC(pA.mode,cx,cy,pA.r);
+  const rhoA=buildRho(cx,cy,pA.r), DfA=buildDField(cx,cy,pA.r,pA.D);
+  const chunkA=Math.floor(pA.steps/CHUNKS);
+  for(let i=0;i<CHUNKS;i++){
+    await new Promise(r=>setTimeout(r,0));
+    pdeChunk(CA,DfA,rhoA,dx,dtA,pA.lam,pA.k,chunkA,pA.mode);
+    document.getElementById('cmp-prog').style.width=((i+1)/CHUNKS/2*100).toFixed(0)+'%';
+  }
+
+  document.getElementById('cmp-status').textContent='Running Drug B…';
+
+  // ── Drug B ──
+  const dtB=.9*dx*dx/(4*pB.D+1e-10);
+  const CB=initC(pB.mode,cx,cy,pB.r);
+  const rhoB=buildRho(cx,cy,pB.r), DfB=buildDField(cx,cy,pB.r,pB.D);
+  const chunkB=Math.floor(pB.steps/CHUNKS);
+  for(let i=0;i<CHUNKS;i++){
+    await new Promise(r=>setTimeout(r,0));
+    pdeChunk(CB,DfB,rhoB,dx,dtB,pB.lam,pB.k,chunkB,pB.mode);
+    document.getElementById('cmp-prog').style.width=(50+(i+1)/CHUNKS/2*100).toFixed(0)+'%';
+  }
+
+  // ── Draw ──
+  drawHeatmap('cmp-heatmap-A',CA,cx,cy,pA.r,400,400);
+  drawHeatmap('cmp-heatmap-B',CB,cx,cy,pB.r,400,400);
+
+  const mA=calcMetrics(CA,cx,cy,pA.r);
+  const mB=calcMetrics(CB,cx,cy,pB.r);
+  const curveA=radialCurve(CA,cx,cy);
+  const curveB=radialCurve(CB,cx,cy);
+  drawCompareCurves(curveA,curveB,pA.r);
+
+  // fill metrics
+  document.getElementById('cmpA-avg').textContent=mA.tumorAvg;
+  document.getElementById('cmpA-max').textContent=mA.maxC;
+  document.getElementById('cmpA-depth').textContent=mA.depth50;
+  document.getElementById('cmpA-cov').textContent=mA.coverage;
+  document.getElementById('cmpB-avg').textContent=mB.tumorAvg;
+  document.getElementById('cmpB-max').textContent=mB.maxC;
+  document.getElementById('cmpB-depth').textContent=mB.depth50;
+  document.getElementById('cmpB-cov').textContent=mB.coverage;
+  document.getElementById('cmp-title-A').textContent=pA.label+' (A)';
+  document.getElementById('cmp-title-B').textContent=pB.label+' (B)';
+
+  // summary
+  const winnerAvg = parseFloat(mA.tumorAvg) >= parseFloat(mB.tumorAvg) ? pA.label : pB.label;
+  const winnerDepth = mA.depth50 >= mB.depth50 ? pA.label : pB.label;
+  const winnerCov = parseFloat(mA.coverage) >= parseFloat(mB.coverage) ? pA.label : pB.label;
+  document.getElementById('cmp-summary-text').innerHTML=`
+    <p>Comparison of <strong>${pA.label}</strong> vs <strong>${pB.label}</strong> in <strong>${pA.tumor}</strong> tumor (${pA.mode.replace(/_/g,' ')}, ${pA.steps} steps).</p>
+    <p><strong>Tumor average concentration:</strong> ${pA.label} = ${mA.tumorAvg} vs ${pB.label} = ${mB.tumorAvg} — <span style="color:var(--green)">${winnerAvg} achieves higher mean concentration.</span></p>
+    <p><strong>50% penetration depth:</strong> ${pA.label} = ${mA.depth50} px vs ${pB.label} = ${mB.depth50} px — <span style="color:var(--green)">${winnerDepth} penetrates deeper.</span></p>
+    <p><strong>Tumor coverage (&gt;10%):</strong> ${pA.label} = ${mA.coverage}% vs ${pB.label} = ${mB.coverage}% — <span style="color:var(--green)">${winnerCov} covers more of the tumor volume.</span></p>
+    <p style="color:var(--text3);font-size:.8rem;"><em>For research use only. Results are model approximations.</em></p>`;
+
+  document.getElementById('cmp-results').style.display='';
+  document.getElementById('cmp-status').textContent='Complete ✓';
+  btn.disabled=false; btn.textContent='▶ Run comparison';
+}
+
+function drawCompareCurves(curveA, curveB, tumorR){
+  const canvas=document.getElementById('cmp-curve');
+  const W=1000, H=220; canvas.width=W; canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#030507'; ctx.fillRect(0,0,W,H);
+  const pad={l:48,r:24,t:20,b:38}, cW=W-pad.l-pad.r, cH=H-pad.t-pad.b;
+  const maxR=curveA.length;
+
+  // grid
+  ctx.strokeStyle='rgba(99,130,166,.08)'; ctx.lineWidth=.5;
+  for(let i=0;i<=5;i++){
+    const y2=pad.t+cH*(1-i/5);
+    ctx.beginPath();ctx.moveTo(pad.l,y2);ctx.lineTo(pad.l+cW,y2);ctx.stroke();
+    ctx.fillStyle='rgba(99,130,166,.5)';ctx.font='10px Space Mono,monospace';
+    ctx.fillText((i/5).toFixed(1),4,y2+4);
+  }
+
+  // tumor wall
+  const tx=pad.l+(tumorR/maxR)*cW;
+  ctx.strokeStyle='rgba(0,229,255,.3)';ctx.setLineDash([5,4]);ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(tx,pad.t);ctx.lineTo(tx,pad.t+cH);ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='rgba(0,229,255,.5)';ctx.font='10px Space Mono,monospace';
+  ctx.fillText('tumor wall',tx+4,pad.t+13);
+
+  // curve A (blue)
+  ctx.strokeStyle='#4d9eff'; ctx.lineWidth=2.5; ctx.lineJoin='round';
+  ctx.beginPath();
+  curveA.forEach((v,i)=>{const x2=pad.l+(i/maxR)*cW,y2=pad.t+cH*(1-v);i===0?ctx.moveTo(x2,y2):ctx.lineTo(x2,y2);});
+  ctx.stroke();
+
+  // curve B (green)
+  ctx.strokeStyle='#3de383'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  curveB.forEach((v,i)=>{const x2=pad.l+(i/maxR)*cW,y2=pad.t+cH*(1-v);i===0?ctx.moveTo(x2,y2):ctx.lineTo(x2,y2);});
+  ctx.stroke();
+
+  // axis label
+  ctx.fillStyle='rgba(99,130,166,.5)';ctx.font='10px Space Mono,monospace';
+  ctx.fillText('Radial distance from tumor center (px)',pad.l+cW/2-130,H-6);
+}
+
+function resetCompare(){
+  ['cmp-heatmap-A','cmp-heatmap-B','cmp-curve'].forEach(id=>{
+    const c=document.getElementById(id);if(!c)return;
+    const ctx=c.getContext('2d');ctx.fillStyle='#030507';ctx.fillRect(0,0,c.width,c.height);
+  });
+  ['cmpA-avg','cmpA-max','cmpA-depth','cmpA-cov','cmpB-avg','cmpB-max','cmpB-depth','cmpB-cov'].forEach(id=>document.getElementById(id).textContent='—');
+  document.getElementById('cmp-prog').style.width='0%';
+  document.getElementById('cmp-status').textContent='';
+  document.getElementById('cmp-results').style.display='none';
+}
+
 loadPreset();
+loadCmpPreset('A');
+loadCmpPreset('B');
 </script>
 </body>
 </html>
