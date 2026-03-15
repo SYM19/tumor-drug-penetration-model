@@ -1101,7 +1101,7 @@ async function askAI() {
   resp.textContent = 'Claude is analysing…';
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('https://pde-proxy.genius-amy-shi.workers.dev', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
