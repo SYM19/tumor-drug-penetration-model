@@ -195,6 +195,14 @@
     /* Mobile */
     @media(max-width:900px){.grid-2{grid-template-columns:1fr;}}
     @media(max-width:600px){.grid-4{grid-template-columns:1fr 1fr;}main{padding:1rem;}header{padding:0 1rem;}.hero-title{font-size:1.4rem;}}
+
+    /* Lang button */
+    .lang-btn{font-family:var(--mono);font-size:.72rem;padding:4px 12px;border:1px solid var(--border2);border-radius:20px;background:transparent;color:var(--text2);cursor:pointer;transition:all .2s;white-space:nowrap;}
+    .lang-btn:hover{border-color:var(--blue);color:var(--blue);}
+
+    /* Outreach link */
+    .outreach-link{font-family:var(--mono);font-size:.7rem;color:var(--text3);border:1px solid var(--border);border-radius:4px;padding:3px 10px;text-decoration:none;transition:color .2s,border-color .2s;}
+    .outreach-link:hover{color:var(--green);border-color:var(--green);}
   </style>
 </head>
 <body>
@@ -209,14 +217,16 @@
   <header>
     <a class="logo" href="#" onclick="switchTab('about');return false;">PDE<em>Oncology</em></a>
     <nav id="nav">
-      <button class="active" onclick="switchTab('about')">About</button>
-      <button onclick="switchTab('simulation')">Simulation</button>
-      <button onclick="switchTab('ai')">AI Drug Input</button>
-      <button onclick="switchTab('compare')">Compare</button>
-      <button onclick="switchTab('results')">Results</button>
-      <button onclick="switchTab('database')">Drug Database</button>
+      <button class="active" onclick="switchTab('about')" data-i18n="nav-about">About</button>
+      <button onclick="switchTab('simulation')" data-i18n="nav-simulation">Simulation</button>
+      <button onclick="switchTab('ai')" data-i18n="nav-ai">AI Drug Input</button>
+      <button onclick="switchTab('compare')" data-i18n="nav-compare">Compare</button>
+      <button onclick="switchTab('results')" data-i18n="nav-results">Results</button>
+      <button onclick="switchTab('database')" data-i18n="nav-database">Drug Database</button>
     </nav>
     <div class="header-right">
+      <a class="outreach-link" href="https://sym19.github.io/pdeoutreach" target="_blank" data-i18n="outreach-link">PDEOutreach ↗</a>
+      <button class="lang-btn" id="lang-btn" onclick="toggleLang()">切换中文</button>
       <div class="status-dot"></div>
       <span class="v-badge">v0.4</span>
     </div>
@@ -230,7 +240,7 @@
       <!-- Hero -->
       <div class="hero section">
         <div class="hero-title"><span class="pde">PDE</span><span class="onco">Oncology</span></div>
-        <p style="max-width:680px;font-size:.95rem;">A browser-based platform for simulating tumor drug penetration using reaction-diffusion partial differential equations. Designed for researchers, educators, and clinicians who want to explore how drug physicochemical properties and tumor microenvironment interact to determine therapeutic efficacy.</p>
+        <p style="max-width:680px;font-size:.95rem;" data-i18n="about-hero-sub">A browser-based platform for simulating tumor drug penetration using reaction-diffusion partial differential equations. Designed for researchers, educators, and clinicians who want to explore how drug physicochemical properties and tumor microenvironment interact to determine therapeutic efficacy.</p>
         <div class="formula-box">∂C/∂t = ∇·(D(x,y)∇C) − λC − k·ρ(x,y)·C</div>
         <div class="hero-chips">
           <span class="hero-chip">FDM · FTCS scheme</span>
@@ -246,11 +256,11 @@
 
       <!-- Motivation -->
       <div class="section">
-        <h2>Motivation</h2>
+        <h2 data-i18n="about-motivation-title">Motivation</h2>
         <div class="card">
-          <p>Drug resistance and treatment failure in solid tumors are often not purely pharmacological — they are physical. Even potent drugs can fail to reach the tumor core due to elevated interstitial fluid pressure (IFP), dense extracellular matrix, and poor vascularisation. These barriers are especially pronounced in pancreatic ductal adenocarcinoma, glioblastoma, and triple-negative breast cancer.</p>
-          <p>PDEOncology provides an accessible simulation environment to visualise these phenomena. By adjusting diffusion coefficient D, degradation rate λ, and uptake rate k, users can intuitively explore how molecular weight, metabolic stability, and receptor expression shape drug distribution — without requiring a computational background.</p>
-          <p style="margin:0;">The AI integration (Claude API) goes one step further: users can describe a drug and tumor in plain English and receive biophysically grounded PDE parameters derived from published literature, enabling rapid hypothesis generation.</p>
+          <p data-i18n="about-motivation-p1">Drug resistance and treatment failure in solid tumors are often not purely pharmacological — they are physical. Even potent drugs can fail to reach the tumor core due to elevated interstitial fluid pressure (IFP), dense extracellular matrix, and poor vascularisation. These barriers are especially pronounced in pancreatic ductal adenocarcinoma, glioblastoma, and triple-negative breast cancer.</p>
+          <p data-i18n="about-motivation-p2">PDEOncology provides an accessible simulation environment to visualise these phenomena. By adjusting diffusion coefficient D, degradation rate λ, and uptake rate k, users can intuitively explore how molecular weight, metabolic stability, and receptor expression shape drug distribution — without requiring a computational background.</p>
+          <p style="margin:0;" data-i18n="about-motivation-p3">The AI integration (Claude API) goes one step further: users can describe a drug and tumor in plain English and receive biophysically grounded PDE parameters derived from published literature, enabling rapid hypothesis generation.</p>
         </div>
       </div>
 
@@ -258,33 +268,28 @@
 
       <!-- How it works -->
       <div class="section">
-        <h2>How it works</h2>
+        <h2 data-i18n="about-howworks-title">How it works</h2>
         <div class="grid-2">
           <div class="feat-card">
             <div class="feat-icon blue">⬡</div>
-            <h3>Numerical method</h3>
-            <p>Explicit finite difference (FTCS scheme) on a uniform 2D grid (80 × 80 nodes, representing a 1 cm × 1 cm tissue cross-section). Stability is enforced via the CFL condition:</p>
+            <h3 data-i18n="about-num-title">Numerical method</h3>
+            <p data-i18n="about-num-p">Explicit finite difference (FTCS scheme) on a uniform 2D grid (80 × 80 nodes, representing a 1 cm × 1 cm tissue cross-section). Stability is enforced via the CFL condition:</p>
             <div class="formula-box" style="font-size:.8rem;margin:.5rem 0;">dt ≤ dx² / (4D)</div>
-            <p style="margin:0;">Each simulation step advances the concentration field C by one time increment dt, computed from user-specified parameters.</p>
           </div>
           <div class="feat-card">
             <div class="feat-icon amber">◉</div>
-            <h3>Tumor geometry</h3>
-            <p>The tumor is modelled as a circular region with a radially-graded cell density field ρ(x,y). In the core, ρ approaches 1.0 (maximum uptake); in the periphery it decays exponentially.</p>
-            <p style="margin:0;">The diffusion coefficient D(x,y) is spatially attenuated inside the tumor to simulate elevated IFP and ECM resistance — the core receives only 40–100% of the free-tissue D value.</p>
+            <h3 data-i18n="about-tumor-title">Tumor geometry</h3>
+            <p data-i18n="about-tumor-p">Circular tumor geometry with a radially-graded cell density field ρ(x,y). Diffusion coefficient D attenuated in tumor core to simulate IFP and extracellular matrix barriers.</p>
           </div>
           <div class="feat-card">
             <div class="feat-icon green">◈</div>
-            <h3>AI parameter extraction</h3>
-            <p>The AI Drug Input tab calls the Claude API (Anthropic) with a structured system prompt. Claude returns a JSON object containing D, λ, k, tumor radius, and a penetration difficulty rating grounded in published biophysical data.</p>
-            <p style="margin:0;">When no API key is provided, a local fuzzy-matching fallback searches the built-in drug database by drug name and tumor type keywords.</p>
+            <h3 data-i18n="about-ai-title">AI integration</h3>
+            <p data-i18n="about-ai-p">Uses Claude API to extract biophysically grounded PDE parameters from natural-language descriptions. Falls back to local database when offline.</p>
           </div>
           <div class="feat-card">
             <div class="feat-icon purple">▷</div>
-            <h3>Delivery modes</h3>
-            <p><strong>IV Infusion</strong> — Left boundary maintained at C = 1.0, simulating systemic drug delivery with a blood-vessel boundary.</p>
-            <p><strong>Vascular ring</strong> — Concentration initialised on an annular ring surrounding the tumor, simulating peri-tumoral vascular supply.</p>
-            <p style="margin:0;"><strong>Intratumoral injection</strong> — Point source at tumor centre, simulating direct locoregional drug delivery.</p>
+            <h3 data-i18n="about-delivery-title">Delivery modes</h3>
+            <p data-i18n="about-delivery-p"><strong>IV Infusion</strong> — Left boundary maintained at C = 1.0, simulating systemic drug delivery with a blood-vessel boundary. <strong>Vascular ring</strong> — Concentration initialised on an annular ring surrounding the tumor. <strong>Intratumoral injection</strong> — Point source at tumor centre.</p>
           </div>
         </div>
       </div>
@@ -293,24 +298,24 @@
 
       <!-- Quickstart -->
       <div class="section">
-        <h2>Quickstart</h2>
+        <h2 data-i18n="about-quickstart-title">Quickstart</h2>
         <div class="card">
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;">
             <div style="display:flex;gap:12px;align-items:flex-start;">
               <div style="width:28px;height:28px;border-radius:50%;background:var(--blue-dim);border:1px solid rgba(77,158,255,.3);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.8rem;color:var(--blue);flex-shrink:0;">1</div>
-              <div><strong>Pick a preset</strong><p style="margin:.25rem 0 0;font-size:.82rem;">Go to <strong>Simulation</strong>, select a drug and tumor type from the dropdowns. Parameters auto-fill from the built-in database.</p></div>
+              <div><strong data-i18n="about-qs1-title">Pick a preset</strong><p style="margin:.25rem 0 0;font-size:.82rem;" data-i18n="about-qs1-p">Go to <strong>Simulation</strong>, select a drug and tumor type from the dropdowns. Parameters auto-fill from the built-in database.</p></div>
             </div>
             <div style="display:flex;gap:12px;align-items:flex-start;">
               <div style="width:28px;height:28px;border-radius:50%;background:var(--blue-dim);border:1px solid rgba(77,158,255,.3);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.8rem;color:var(--blue);flex-shrink:0;">2</div>
-              <div><strong>Or use AI</strong><p style="margin:.25rem 0 0;font-size:.82rem;">Go to <strong>AI Drug Input</strong>, describe your drug + tumor in plain English. Claude fills the parameters automatically.</p></div>
+              <div><strong data-i18n="about-qs2-title">Or use AI</strong><p style="margin:.25rem 0 0;font-size:.82rem;" data-i18n="about-qs2-p">Go to <strong>AI Drug Input</strong>, describe your drug + tumor in plain English. Claude fills the parameters automatically.</p></div>
             </div>
             <div style="display:flex;gap:12px;align-items:flex-start;">
               <div style="width:28px;height:28px;border-radius:50%;background:var(--blue-dim);border:1px solid rgba(77,158,255,.3);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.8rem;color:var(--blue);flex-shrink:0;">3</div>
-              <div><strong>Run &amp; animate</strong><p style="margin:.25rem 0 0;font-size:.82rem;">Click <strong>Run simulation</strong>. A 20-frame diffusion animation appears automatically — hit Play to watch drug spread over time.</p></div>
+              <div><strong data-i18n="about-qs3-title">Run &amp; animate</strong><p style="margin:.25rem 0 0;font-size:.82rem;" data-i18n="about-qs3-p">Click <strong>Run simulation</strong>. A 20-frame diffusion animation appears automatically — hit Play to watch drug spread over time.</p></div>
             </div>
             <div style="display:flex;gap:12px;align-items:flex-start;">
               <div style="width:28px;height:28px;border-radius:50%;background:var(--blue-dim);border:1px solid rgba(77,158,255,.3);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.8rem;color:var(--blue);flex-shrink:0;">4</div>
-              <div><strong>Export</strong><p style="margin:.25rem 0 0;font-size:.82rem;">Go to <strong>Results</strong> to view analytics, read the auto-generated report, and export CSV or PNG.</p></div>
+              <div><strong data-i18n="about-qs4-title">Export</strong><p style="margin:.25rem 0 0;font-size:.82rem;" data-i18n="about-qs4-p">Go to <strong>Results</strong> to view analytics, read the auto-generated report, and export CSV or PNG.</p></div>
             </div>
           </div>
         </div>
@@ -320,16 +325,16 @@
 
       <!-- PDE parameters table -->
       <div class="section">
-        <h2>PDE parameters</h2>
+        <h2 data-i18n="about-params-title">PDE parameters</h2>
         <div class="card table-wrap">
           <table>
-            <thead><tr><th>Parameter</th><th>Symbol</th><th>Meaning</th><th>Typical range</th><th>Physical basis</th></tr></thead>
+            <thead><tr><th id="th-param">Parameter</th><th id="th-symbol">Symbol</th><th id="th-meaning">Meaning</th><th id="th-range">Typical range</th><th id="th-basis">Physical basis</th></tr></thead>
             <tbody>
-              <tr><td>Diffusion coefficient</td><td><code>D</code></td><td>Rate of drug spread through tissue</td><td>0.005 – 0.25</td><td>Molecular weight, tissue tortuosity, ECM density</td></tr>
-              <tr><td>Degradation rate</td><td><code>λ</code></td><td>First-order drug breakdown</td><td>0.001 – 0.05</td><td>Metabolic clearance, plasma half-life</td></tr>
-              <tr><td>Uptake rate</td><td><code>k</code></td><td>Drug absorption by tumor cells</td><td>0.01 – 0.15</td><td>Receptor/transporter expression, endocytosis rate</td></tr>
-              <tr><td>Cell density</td><td><code>ρ(x,y)</code></td><td>Spatial distribution of tumor cells</td><td>0.05 – 1.0</td><td>Histological packing, necrotic core fraction</td></tr>
-              <tr><td>Tumor radius</td><td><code>r</code></td><td>Radius of tumor region in grid units</td><td>10 – 38 px</td><td>Tumour volume, imaging-derived size estimate</td></tr>
+              <tr><td id="p-D-name">Diffusion coefficient</td><td><code>D</code></td><td id="p-D-meaning">Rate of drug spread through tissue</td><td>0.005 – 0.25</td><td id="p-D-basis">Molecular weight, tissue tortuosity, ECM density</td></tr>
+              <tr><td id="p-lam-name">Degradation rate</td><td><code>λ</code></td><td id="p-lam-meaning">First-order drug breakdown</td><td>0.001 – 0.05</td><td id="p-lam-basis">Metabolic clearance, plasma half-life</td></tr>
+              <tr><td id="p-k-name">Uptake rate</td><td><code>k</code></td><td id="p-k-meaning">Drug absorption by tumor cells</td><td>0.01 – 0.15</td><td id="p-k-basis">Receptor/transporter expression, endocytosis rate</td></tr>
+              <tr><td id="p-rho-name">Cell density</td><td><code>ρ(x,y)</code></td><td id="p-rho-meaning">Spatial distribution of tumor cells</td><td>0.05 – 1.0</td><td id="p-rho-basis">Histological packing, necrotic core fraction</td></tr>
+              <tr><td id="p-r-name">Tumor radius</td><td><code>r</code></td><td id="p-r-meaning">Radius of tumor region in grid units</td><td>10 – 38 px</td><td id="p-r-basis">Tumour volume, imaging-derived size estimate</td></tr>
             </tbody>
           </table>
         </div>
@@ -339,18 +344,10 @@
 
       <!-- Limitations -->
       <div class="section">
-        <h2>Limitations &amp; assumptions</h2>
+        <h2 data-i18n="about-lim-title">Limitations &amp; assumptions</h2>
         <div class="card">
-          <p>PDEOncology is an educational and exploratory tool. The following simplifications are made:</p>
-          <ul style="font-size:.875rem;color:var(--text2);line-height:1.9;padding-left:1.25rem;margin-bottom:.75rem;">
-            <li>Tumor geometry is circular and homogeneous — real tumors are irregular and heterogeneous.</li>
-            <li>The model is 2D; real drug penetration is three-dimensional.</li>
-            <li>Cell density and diffusion fields are static — in reality they evolve with treatment response.</li>
-            <li>Convective transport (IFP-driven bulk flow) is not modelled; only diffusive transport is included.</li>
-            <li>Parameters are normalised and dimensionless; absolute quantitative predictions require careful calibration against experimental data.</li>
-            <li>The FTCS scheme is first-order in time and second-order in space; higher-order methods would improve accuracy for large D or small grids.</li>
-          </ul>
-          <p style="margin:0;color:var(--text3);font-size:.82rem;"><em>Results are model approximations and should not be used for clinical decision-making.</em></p>
+          <p data-i18n="about-lim-p">PDEOncology is an educational and exploratory tool. Simplifications include: circular homogeneous geometry, 2D model, static density fields, no convective transport, normalised dimensionless parameters, first-order time accuracy.</p>
+          <p style="margin:0;color:var(--text3);font-size:.82rem;" data-i18n="about-disclaimer"><em>Results are model approximations and should not be used for clinical decision-making.</em></p>
         </div>
       </div>
 
@@ -358,38 +355,40 @@
 
       <!-- Team -->
       <div class="section">
-        <h2>Project team</h2>
+        <h2 data-i18n="about-team-title">Project team</h2>
         <div class="grid-2">
           <div class="feat-card" style="border-top:2px solid var(--blue);">
             <div style="display:flex;align-items:center;gap:12px;margin-bottom:.875rem;">
-              <div style="width:44px;height:44px;border-radius:50%;background:var(--blue-dim);border:1px solid rgba(77,158,255,.3);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;color:var(--blue);font-size:1rem;flex-shrink:0;">G</div>
+              <div style="width:44px;height:44px;border-radius:50%;background:var(--blue-dim);border:1px solid rgba(77,158,255,.3);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;color:var(--blue);font-size:1rem;flex-shrink:0;">Y</div>
               <div>
-                <div style="font-weight:600;color:var(--text);font-size:.95rem;">Genius</div>
+                <div style="font-weight:600;color:var(--text);font-size:.95rem;">Yumeng S.</div>
                 <div style="font-size:.75rem;color:var(--text3);font-family:var(--mono);">NSFZ · IB</div>
               </div>
             </div>
             <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:.75rem;">
               <span class="tag blue">Technical Development</span>
-              <span class="tag blue">Website</span>
-              <span class="tag blue">UI Engineering</span>
+              <span class="tag blue">Website Engineering</span>
+              <span class="tag blue">UI Design</span>
+              <span class="tag blue">PDE Implementation</span>
             </div>
-            <p style="margin:0;font-size:.82rem;">Built the entire platform from PDE solver to frontend — the person who actually makes things work at 2am.</p>
+            <p style="margin:0;font-size:.82rem;" id="team-desc-Y">Designed and built the full PDEOncology platform from the ground up — including the finite difference PDE solver, interactive visualisation engine, AI integration via Claude API, bilingual language system, and the complete frontend interface. Also leads the development of PDEOutreach.</p>
           </div>
 
           <div class="feat-card" style="border-top:2px solid var(--green);">
             <div style="display:flex;align-items:center;gap:12px;margin-bottom:.875rem;">
-              <div style="width:44px;height:44px;border-radius:50%;background:var(--green-dim);border:1px solid rgba(61,227,131,.3);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;color:var(--green);font-size:1rem;flex-shrink:0;">B</div>
+              <div style="width:44px;height:44px;border-radius:50%;background:var(--green-dim);border:1px solid rgba(61,227,131,.3);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;color:var(--green);font-size:1rem;flex-shrink:0;">T</div>
               <div>
-                <div style="font-weight:600;color:var(--text);font-size:.95rem;">Baichi</div>
+                <div style="font-weight:600;color:var(--text);font-size:.95rem;">Tracey Y.</div>
                 <div style="font-size:.75rem;color:var(--text3);font-family:var(--mono);">Wycombe Abbey · UK</div>
               </div>
             </div>
             <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:.75rem;">
-              <span class="tag green">Chatting</span>
-              <span class="tag green">FaceTime</span>
-              <span class="tag green">Moral Support</span>
+              <span class="tag green">Literature Research</span>
+              <span class="tag green">Drug Database</span>
+              <span class="tag green">Science Communication</span>
+              <span class="tag green">Outreach & Promotion</span>
             </div>
-            <p style="margin:0;font-size:.82rem;">Critical contributor via FaceTime. Provides real-time feedback, enthusiasm, and occasional academic insights from across the globe.</p>
+            <p style="margin:0;font-size:.82rem;" id="team-desc-T">Leads the research and content development for the project — curating the drug parameter database from published literature, sourcing biophysical references, and driving outreach and science communication across PDEOutreach and partner social media channels.</p>
           </div>
         </div>
 
@@ -406,7 +405,7 @@
 
       <!-- References -->
       <div class="section">
-        <h2>References</h2>
+        <h2 data-i18n="about-refs-title">References</h2>
         <div class="card">
           <ol style="font-size:.82rem;color:var(--text2);line-height:2;padding-left:1.25rem;">
             <li>Jain RK. Transport of molecules in the tumor interstitium: a review. <em>Cancer Research</em>, 47(12):3039–3051, 1987.</li>
@@ -415,7 +414,7 @@
             <li>Chauhan VP, Stylianopoulos T, Boucher Y, Jain RK. Delivery of molecular and nanoscale medicine to tumors: transport barriers and strategies. <em>Annual Review of Chemical and Biomolecular Engineering</em>, 2:281–298, 2011.</li>
             <li>Tannock IF, Lee CM, Tunggal JK, Cowan DS, Egorin MJ. Limited penetration of anticancer drugs through tumor tissue. <em>Clinical Cancer Research</em>, 8(3):878–884, 2002.</li>
             <li>Minchinton AI, Tannock IF. Drug penetration in solid tumours. <em>Nature Reviews Cancer</em>, 6(8):583–592, 2006.</li>
-            <li>Kyle AH, Huxham LA, Yeoman DM, Minchinton AI. Limited tissue penetration of taxanes: a mechanism for resistance in solid tumors. <em>Clinical Cancer Research</em>, 13(9):2804–2810, 2007.</li>
+            <li>Kyle AH, Huxham LA, Yeoman DM, Minchinton AI. Limited tissue penetration of taxanes. <em>Clinical Cancer Research</em>, 13(9):2804–2810, 2007.</li>
             <li style="color:var(--text3);font-style:italic;">Additional references will be added as the drug database expands. — <em>[placeholder]</em></li>
           </ol>
         </div>
@@ -425,11 +424,11 @@
 
       <!-- Version history -->
       <div class="section">
-        <h2>Version history</h2>
+        <h2 data-i18n="about-version-title">Version history</h2>
         <div class="card table-wrap">
           <table>
-            <thead><tr><th>Version</th><th>Date</th><th>Changes</th></tr></thead>
-            <tbody>
+            <thead><tr><th>Version</th><th>Date</th><th id="vh-changes-th">Changes</th></tr></thead>
+            <tbody id="version-history-tbody">
               <tr><td><span class="tag blue">v0.4</span></td><td>Mar 2026</td><td>20-frame diffusion animation player (Play/Pause/Scrub/Speed), Compare tab — dual-drug side-by-side with overlay penetration curves and auto-generated comparison summary, favicon, About tab complete with references and team</td></tr>
               <tr><td><span class="tag blue">v0.3</span></td><td>Mar 2026</td><td>UI embellish — Space Mono / Inter fonts, dark academic theme, grid background, loader animation, upgraded heatmap + curve rendering, mobile responsive</td></tr>
               <tr><td><span class="tag">v0.2</span></td><td>Mar 2026</td><td>Cloudflare Worker CORS proxy, Claude API integration, AI fallback to local database, 5-tab layout, drug database (21 entries), CSV/PNG export</td></tr>
@@ -529,21 +528,21 @@
             </div>
             <div style="margin-top:12px;">
               <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-                <span style="font-family:var(--mono);font-size:.72rem;color:var(--text2);width:60px;">Frame</span>
+                <span id="frame-label" style="font-family:var(--mono);font-size:.72rem;color:var(--text2);width:60px;" data-i18n="sim-frame-label">Frame</span>
                 <input type="range" id="anim-scrub" min="0" max="0" step="1" value="0" oninput="scrubAnim(this.value)" style="flex:1;">
                 <span class="slider-val" id="anim-scrub-val">0</span>
               </div>
               <div style="display:flex;align-items:center;gap:10px;">
-                <span style="font-family:var(--mono);font-size:.72rem;color:var(--text2);width:60px;">Speed</span>
+                <span id="speed-label" style="font-family:var(--mono);font-size:.72rem;color:var(--text2);width:60px;" data-i18n="sim-speed-label">Speed</span>
                 <input type="range" id="anim-speed" min="1" max="10" step="1" value="4" oninput="document.getElementById('anim-speed-val').textContent=this.value+'×'" style="flex:1;">
                 <span class="slider-val" id="anim-speed-val">4×</span>
               </div>
             </div>
             <div class="btn-row" style="margin-top:.75rem;">
-              <button class="btn btn-primary" id="play-btn" onclick="togglePlay()">▶ Play</button>
-              <button class="btn btn-ghost" onclick="stepAnim(-1)">◀ Prev</button>
-              <button class="btn btn-ghost" onclick="stepAnim(1)">Next ▶</button>
-              <button class="btn btn-ghost" onclick="resetAnim()">⟳ Reset</button>
+              <button class="btn btn-primary" id="play-btn" onclick="togglePlay()" data-i18n="sim-play-btn">▶ Play</button>
+              <button class="btn btn-ghost" id="prev-btn" onclick="stepAnim(-1)" data-i18n="sim-prev-btn">◀ Prev</button>
+              <button class="btn btn-ghost" id="next-btn" onclick="stepAnim(1)" data-i18n="sim-next-btn">Next ▶</button>
+              <button class="btn btn-ghost" id="reset-anim-btn" onclick="resetAnim()" data-i18n="sim-reset-anim-btn">⟳ Reset</button>
             </div>
           </div>
         </div>
@@ -558,8 +557,8 @@
     <!-- COMPARE -->
     <div id="tab-compare" class="tab-panel">
       <div class="section">
-        <h1>Drug <span class="accent">Compare</span></h1>
-        <p>Simulate two drugs on the same tumor side-by-side. Compare penetration depth, tumor coverage, and concentration profiles.</p>
+        <h1 data-i18n="cmp-title">Drug <span class="accent">Compare</span></h1>
+        <p data-i18n="cmp-sub">Simulate two drugs on the same tumor side-by-side. Compare penetration depth, tumor coverage, and concentration profiles.</p>
       </div>
 
       <!-- Shared tumor settings -->
@@ -699,16 +698,22 @@
         <div class="card section" style="grid-column:1/-1;" id="cmp-summary">
           <div class="card-header"><div class="card-icon green">✦</div><h2 style="margin:0;">Comparison summary</h2></div>
           <div id="cmp-summary-text" style="font-size:.875rem;line-height:1.85;color:var(--text2);"></div>
+          <div class="btn-row" style="margin-top:1rem;">
+            <button class="btn btn-primary" onclick="exportCmpCSV()" data-i18n="cmp-export-csv">Export CSV</button>
+            <button class="btn btn-ghost" onclick="exportCmpPNG('A')" data-i18n="cmp-export-a">Save heatmap A</button>
+            <button class="btn btn-ghost" onclick="exportCmpPNG('B')" data-i18n="cmp-export-b">Save heatmap B</button>
+            <button class="btn btn-ghost" onclick="exportCmpCurve()" data-i18n="cmp-export-curve">Save curve PNG</button>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- AI -->
     <div id="tab-ai" class="tab-panel">
-      <div class="section"><h1>AI Drug <span class="accent">Input</span></h1><p>Describe a drug and tumor in plain English. Claude extracts biophysically grounded PDE parameters and loads them into the simulator.</p></div>
+      <div class="section"><h1 data-i18n="ai-title">AI Drug <span class="accent">Input</span></h1><p data-i18n="ai-sub">Describe a drug and tumor in plain English. Claude extracts biophysically grounded PDE parameters and loads them into the simulator.</p></div>
       <div class="card section">
         <div class="card-header"><div class="card-icon blue">🔑</div><h2 style="margin:0;">API key</h2></div>
-        <p style="margin-bottom:.75rem;">Session-only — sent directly to <code>api.anthropic.com</code> via CORS proxy. Never logged.</p>
+        <p style="margin-bottom:.75rem;" data-i18n="ai-key-p">Session-only — sent directly to <code>api.anthropic.com</code> via CORS proxy. Never logged.</p>
         <div style="display:flex;gap:8px;max-width:520px;">
           <input type="text" id="api-key-input" placeholder="sk-ant-api03-…"/>
           <button class="btn btn-primary" onclick="saveKey()">Save</button>
@@ -738,35 +743,35 @@
 
     <!-- RESULTS -->
     <div id="tab-results" class="tab-panel">
-      <div class="section"><h1>Results <span class="accent">&amp; Report</span></h1><p>Run a simulation first, then return here for analytics and export.</p></div>
+      <div class="section"><h1 data-i18n="res-title">Results <span class="accent">&amp; Report</span></h1><p data-i18n="res-sub">Run a simulation first, then return here for analytics and export.</p></div>
       <div id="results-empty" class="card section" style="text-align:center;padding:3rem 1rem;">
         <p style="color:var(--text3);">No simulation data yet.</p>
         <button class="btn btn-ghost" onclick="switchTab('simulation')" style="margin-top:.75rem;">Go to Simulation →</button>
       </div>
       <div id="results-content" style="display:none;">
         <div class="grid-4 section">
-          <div class="metric"><div class="metric-label">Drug</div><div class="metric-value" id="r-drug" style="font-size:.9rem;word-break:break-all;">—</div></div>
-          <div class="metric"><div class="metric-label">Tumor</div><div class="metric-value" id="r-tumor" style="font-size:.9rem;">—</div></div>
-          <div class="metric"><div class="metric-label">Tumor avg C</div><div class="metric-value" id="r-tavg">—</div></div>
-          <div class="metric"><div class="metric-label">50% depth</div><div class="metric-value" id="r-depth">—</div><div class="metric-unit">px</div></div>
+          <div class="metric"><div class="metric-label" id="r-drug-label">Drug</div><div class="metric-value" id="r-drug" style="font-size:.9rem;word-break:break-all;">—</div></div>
+          <div class="metric"><div class="metric-label" id="r-tumor-label">Tumor</div><div class="metric-value" id="r-tumor" style="font-size:.9rem;">—</div></div>
+          <div class="metric"><div class="metric-label" id="r-tavg-label">Tumor avg C</div><div class="metric-value" id="r-tavg">—</div></div>
+          <div class="metric"><div class="metric-label" id="r-depth-label">50% depth</div><div class="metric-value" id="r-depth">—</div><div class="metric-unit">px</div></div>
         </div>
         <div class="grid-2 section">
-          <div class="card"><div class="card-header"><div class="card-icon">🌡</div><h2 style="margin:0;">Concentration heatmap</h2></div><div class="canvas-box"><canvas id="result-heatmap" width="500" height="460"></canvas></div></div>
-          <div class="card"><div class="card-header"><div class="card-icon">📈</div><h2 style="margin:0;">Radial penetration curve</h2></div><div class="canvas-box"><canvas id="result-curve" width="500" height="460"></canvas></div></div>
+          <div class="card"><div class="card-header"><div class="card-icon">🌡</div><h2 style="margin:0;" id="res-heatmap-h">Concentration heatmap</h2></div><div class="canvas-box"><canvas id="result-heatmap" width="500" height="460"></canvas></div></div>
+          <div class="card"><div class="card-header"><div class="card-icon">📈</div><h2 style="margin:0;" id="res-curve-h">Radial penetration curve</h2></div><div class="canvas-box"><canvas id="result-curve" width="500" height="460"></canvas></div></div>
         </div>
-        <div class="card section"><div class="card-header"><div class="card-icon">⚙</div><h2 style="margin:0;">Simulation parameters</h2></div><div class="table-wrap"><table><thead><tr><th>Parameter</th><th>Symbol</th><th>Value</th></tr></thead><tbody id="result-param-body"></tbody></table></div></div>
-        <div class="card section"><div class="card-header"><div class="card-icon green">✦</div><h2 style="margin:0;">Report summary</h2></div><div id="report-text" style="font-size:.875rem;line-height:1.85;color:var(--text2);"></div></div>
+        <div class="card section"><div class="card-header"><div class="card-icon">⚙</div><h2 style="margin:0;" id="res-params-h">Simulation parameters</h2></div><div class="table-wrap"><table><thead><tr><th id="res-th-param">Parameter</th><th id="res-th-sym">Symbol</th><th id="res-th-val">Value</th></tr></thead><tbody id="result-param-body"></tbody></table></div></div>
+        <div class="card section"><div class="card-header"><div class="card-icon green">✦</div><h2 style="margin:0;" id="res-report-h">Report summary</h2></div><div id="report-text" style="font-size:.875rem;line-height:1.85;color:var(--text2);"></div></div>
         <div class="btn-row section">
-          <button class="btn btn-primary" onclick="exportCSV()">Export CSV</button>
-          <button class="btn btn-ghost" onclick="exportPNG()">Save heatmap PNG</button>
-          <button class="btn btn-ghost" onclick="printReport()">Print report</button>
+          <button class="btn btn-primary" onclick="exportCSV()" data-i18n="res-export-csv">Export CSV</button>
+          <button class="btn btn-ghost" onclick="exportPNG()" data-i18n="res-export-png">Save heatmap PNG</button>
+          <button class="btn btn-ghost" onclick="printReport()" data-i18n="res-print">Print report</button>
         </div>
       </div>
     </div>
 
     <!-- DATABASE -->
     <div id="tab-database" class="tab-panel">
-      <div class="section"><h1>Drug <span class="accent">Database</span></h1><p>Built-in parameter library. Click any row to load into the simulator.</p></div>
+      <div class="section"><h1 data-i18n="db-title">Drug <span class="accent">Database</span></h1><p data-i18n="db-sub">Built-in parameter library. Click any row to load into the simulator.</p></div>
       <div class="card section">
         <div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;">
           <input type="text" id="db-search" placeholder="Search drug, tumor, class…" style="max-width:260px;" oninput="filterDB()">
@@ -775,14 +780,14 @@
         </div>
         <div class="table-wrap"><table><thead><tr><th>Drug</th><th>Tumor</th><th>D</th><th>λ</th><th>k</th><th>r</th><th>Difficulty</th><th>Class</th><th></th></tr></thead><tbody id="db-tbody"></tbody></table></div>
       </div>
-      <div class="card section"><h3>About these parameters</h3><p>D scaled relative to free diffusion in water. Uptake rates reflect receptor expression. Degradation accounts for metabolic clearance.</p><p style="margin:0;color:var(--text3);font-size:.8rem;">Sources: Jain RK (1987), Nugent &amp; Jain (1984), Thurber et al. (2008), Chauhan et al. (2011).</p></div>
+      <div class="card section"><h3 data-i18n="db-about-title">About these parameters</h3><p data-i18n="db-about-p">D scaled relative to free diffusion in water. Uptake rates reflect receptor expression. Degradation accounts for metabolic clearance.</p><p style="margin:0;color:var(--text3);font-size:.8rem;" data-i18n="db-sources">Sources: Jain RK (1987), Nugent &amp; Jain (1984), Thurber et al. (2008), Chauhan et al. (2011).</p></div>
     </div>
 
   </main>
 
   <footer>
     <span class="footer-logo">PDEOncology</span>
-    <span>Tumor Drug Penetration Simulator — research &amp; educational use only</span>
+    <span id="footer-copy" data-i18n="footer-copy">Tumor Drug Penetration Simulator — research &amp; educational use only</span>
     <a href="https://github.com/SYM19/tumor-drug-penetration-model" target="_blank">GitHub ↗</a>
   </footer>
 </div>
@@ -1035,7 +1040,7 @@ function drawCurve(canvasId,curve,tumorR,W,H){
   const tx=pad.l+(tumorR/maxR)*cW;
   ctx.strokeStyle='rgba(0,229,255,.3)';ctx.setLineDash([5,4]);ctx.lineWidth=1;
   ctx.beginPath();ctx.moveTo(tx,pad.t);ctx.lineTo(tx,pad.t+cH);ctx.stroke();ctx.setLineDash([]);
-  ctx.fillStyle='rgba(0,229,255,.5)';ctx.font='10px Space Mono,monospace';ctx.fillText('tumor wall',tx+4,pad.t+13);
+  ctx.fillStyle='rgba(0,229,255,.5)';ctx.font='10px Space Mono,monospace';ctx.fillText(currentLang==='zh'?'肿瘤壁':'tumor wall',tx+4,pad.t+13);
   ctx.beginPath();curve.forEach((v,i)=>{const x2=pad.l+(i/maxR)*cW,y2=pad.t+cH*(1-v);i===0?ctx.moveTo(x2,y2):ctx.lineTo(x2,y2);});
   ctx.lineTo(pad.l+cW,pad.t+cH);ctx.lineTo(pad.l,pad.t+cH);ctx.closePath();
   ctx.fillStyle='rgba(77,158,255,.06)';ctx.fill();
@@ -1052,15 +1057,46 @@ function renderResults(){
   document.getElementById('results-empty').style.display='none';
   document.getElementById('results-content').style.display='';
   const{C,curve,metrics,p}=simResult,cx=Math.floor(N/3),cy=N/2;
+
+  // tumor name translation
+  const tumorZh={breast:'乳腺癌',pancreatic:'胰腺癌',glioma:'胶质瘤',melanoma:'黑色素瘤',colorectal:'结直肠癌'};
+  const tumorLabel=currentLang==='zh'?(tumorZh[p.tumor]||p.tumor):p.tumor;
+  const modeLabel=currentLang==='zh'
+    ?({'left_boundary':'左边界（静脉输注）','ring':'血管环','point':'瘤内注射'}[p.mode]||p.mode)
+    :p.mode.replace(/_/g,' ');
+
   document.getElementById('r-drug').textContent=p.drug;
-  document.getElementById('r-tumor').textContent=p.tumor;
+  document.getElementById('r-tumor').textContent=tumorLabel;
   document.getElementById('r-tavg').textContent=metrics.tumorAvg;
   document.getElementById('r-depth').textContent=metrics.depth50;
   drawHeatmap('result-heatmap',C,cx,cy,p.r,500,460);
   drawCurve('result-curve',curve,p.r,500,460);
-  document.getElementById('result-param-body').innerHTML=[['Diffusion coefficient','D',p.D],['Degradation rate','λ',p.lam],['Uptake rate','k',p.k],['Tumor radius','r',p.r+' px'],['Steps','n',p.steps],['Delivery mode','—',p.mode.replace(/_/g,' ')]].map(([n,s,v])=>`<tr><td>${n}</td><td><code>${s}</code></td><td>${v}</td></tr>`).join('');
+
+  // param table
+  const paramRows=currentLang==='zh'
+    ?[['扩散系数','D',p.D],['降解率','λ',p.lam],['摄取率','k',p.k],['肿瘤半径','r',p.r+' px'],['步数','n',p.steps],['给药方式','—',modeLabel]]
+    :[['Diffusion coefficient','D',p.D],['Degradation rate','λ',p.lam],['Uptake rate','k',p.k],['Tumor radius','r',p.r+' px'],['Steps','n',p.steps],['Delivery mode','—',modeLabel]];
+  document.getElementById('result-param-body').innerHTML=paramRows.map(([n,s,v])=>`<tr><td>${n}</td><td><code>${s}</code></td><td>${v}</td></tr>`).join('');
+
+  // report text
   const diff=p.D<.03?'severely limited':p.D<.07?'moderately limited':'relatively good';
-  document.getElementById('report-text').innerHTML=`<p>Simulation of <strong>${p.drug}</strong> penetration into a <strong>${p.tumor}</strong> tumor model (radius ${p.r} px, delivery: ${p.mode.replace(/_/g,' ')}).</p><p>After ${p.steps} time steps, mean drug concentration within the tumor reached <strong>${metrics.tumorAvg}</strong>, peak concentration <strong>${metrics.maxC}</strong>. 50% penetration depth: <strong>${metrics.depth50} px</strong>. Coverage above 10% threshold: <strong>${metrics.coverage}%</strong>.</p><p>With D = ${p.D}, drug transport is ${diff}. λ = ${p.lam} and k = ${p.k} suggest ${p.k>.08?'high':p.k>.05?'moderate':'low'} cellular drug retention.</p><p style="color:var(--text3);font-size:.8rem;"><em>For research use only. Results are model approximations and do not substitute clinical data.</em></p>`;
+  const diffZh=p.D<.03?'极度受限':p.D<.07?'中度受限':'相对良好';
+  const retentionEn=p.k>.08?'high':p.k>.05?'moderate':'low';
+  const retentionZh=p.k>.08?'高':p.k>.05?'中等':'低';
+
+  if(currentLang==='zh'){
+    document.getElementById('report-text').innerHTML=`
+      <p>模拟 <strong>${p.drug}</strong> 在 <strong>${tumorLabel}</strong> 肿瘤模型中的渗透情况（半径 ${p.r} px，给药方式：${modeLabel}）。</p>
+      <p>经过 ${p.steps} 个时间步，肿瘤内药物平均浓度达到 <strong>${metrics.tumorAvg}</strong>，峰值浓度 <strong>${metrics.maxC}</strong>。50% 渗透深度：<strong>${metrics.depth50} px</strong>。超过 10% 阈值的覆盖率：<strong>${metrics.coverage}%</strong>。</p>
+      <p>D = ${p.D}，药物输运${diffZh}。λ = ${p.lam}，k = ${p.k}，提示细胞药物滞留程度为${retentionZh}。</p>
+      <p style="color:var(--text3);font-size:.8rem;"><em>仅供研究使用。结果为模型近似值，不可替代临床数据。</em></p>`;
+  } else {
+    document.getElementById('report-text').innerHTML=`
+      <p>Simulation of <strong>${p.drug}</strong> penetration into a <strong>${p.tumor}</strong> tumor model (radius ${p.r} px, delivery: ${modeLabel}).</p>
+      <p>After ${p.steps} time steps, mean drug concentration within the tumor reached <strong>${metrics.tumorAvg}</strong>, peak concentration <strong>${metrics.maxC}</strong>. 50% penetration depth: <strong>${metrics.depth50} px</strong>. Coverage above 10% threshold: <strong>${metrics.coverage}%</strong>.</p>
+      <p>With D = ${p.D}, drug transport is ${diff}. λ = ${p.lam} and k = ${p.k} suggest ${retentionEn} cellular drug retention.</p>
+      <p style="color:var(--text3);font-size:.8rem;"><em>For research use only. Results are model approximations and do not substitute clinical data.</em></p>`;
+  }
 }
 function exportCSV(){if(!simResult)return;const{curve,p}=simResult;const csv=[['r_px','mean_C'],...curve.map((v,i)=>[i,v.toFixed(6)])].map(r=>r.join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=`PDEOncology_${p.drug}_${p.tumor}.csv`;a.click();}
 function exportPNG(){const a=document.createElement('a');a.href=document.getElementById('result-heatmap').toDataURL('image/png');a.download='PDEOncology_heatmap.png';a.click();}
@@ -1112,7 +1148,16 @@ function applyAIParams(){if(!aiParams)return;setSliders({D:aiParams.D,lam:aiPara
 
 let dbFiltered=[...DB];
 const diffColor={'low':'green','medium':'blue','high':'amber','very high':'red'};
-function renderDB(){document.getElementById('db-tbody').innerHTML=dbFiltered.map(d=>`<tr style="cursor:pointer;" onclick="loadFromDB(${DB.indexOf(d)})"><td><strong style="color:var(--text)">${d.drug}</strong></td><td>${d.tumor}</td><td><code>${d.D}</code></td><td><code>${d.lam}</code></td><td><code>${d.k}</code></td><td>${d.r}</td><td><span class="tag ${diffColor[d.diff]||''}">${d.diff}</span></td><td><span class="tag purple">${d.cls}</span></td><td><button class="btn btn-ghost" style="padding:3px 10px;font-size:.72rem;">Load →</button></td></tr>`).join('');}
+function renderDB(){
+  const tumorZh={breast:'乳腺癌',pancreatic:'胰腺癌',glioma:'胶质瘤',melanoma:'黑色素瘤',colorectal:'结直肠癌'};
+  const diffZh={'low':'低','medium':'中','high':'高','very high':'极高'};
+  const loadTxt=currentLang==='zh'?'载入':'Load →';
+  document.getElementById('db-tbody').innerHTML=dbFiltered.map(d=>{
+    const tumorLabel=currentLang==='zh'?(tumorZh[d.tumor]||d.tumor):d.tumor;
+    const diffLabel=currentLang==='zh'?(diffZh[d.diff]||d.diff):d.diff;
+    return`<tr style="cursor:pointer;" onclick="loadFromDB(${DB.indexOf(d)})"><td><strong style="color:var(--text)">${d.drug}</strong></td><td>${tumorLabel}</td><td><code>${d.D}</code></td><td><code>${d.lam}</code></td><td><code>${d.k}</code></td><td>${d.r}</td><td><span class="tag ${diffColor[d.diff]||''}">${diffLabel}</span></td><td><span class="tag purple">${d.cls}</span></td><td><button class="btn btn-ghost" style="padding:3px 10px;font-size:.72rem;">${loadTxt}</button></td></tr>`;
+  }).join('');
+}
 function filterDB(){const q=document.getElementById('db-search').value.toLowerCase(),tumor=document.getElementById('db-filter-tumor').value,diff=document.getElementById('db-filter-diff').value;dbFiltered=DB.filter(d=>(!q||d.drug.toLowerCase().includes(q)||d.tumor.includes(q)||d.cls.toLowerCase().includes(q))&&(!tumor||d.tumor===tumor)&&(!diff||d.diff===diff));renderDB();}
 function loadFromDB(idx){const d=DB[idx];setSliders(d);const opt=[...document.getElementById('drug-select').options].find(o=>o.value===d.drug.toLowerCase().replace(/[\s-]/g,'_'));document.getElementById('drug-select').value=opt?opt.value:'custom';document.getElementById('tumor-select').value=d.tumor;switchTab('simulation');}
 
@@ -1227,6 +1272,7 @@ async function runCompare(){
     <p><strong>Tumor coverage (&gt;10%):</strong> ${pA.label} = ${mA.coverage}% vs ${pB.label} = ${mB.coverage}% — <span style="color:var(--green)">${winnerCov} covers more of the tumor volume.</span></p>
     <p style="color:var(--text3);font-size:.8rem;"><em>For research use only. Results are model approximations.</em></p>`;
 
+  cmpLastResult={curveA:Array.from(curveA),curveB:Array.from(curveB),pA,pB};
   document.getElementById('cmp-results').style.display='';
   document.getElementById('cmp-status').textContent='Complete ✓';
   btn.disabled=false; btn.textContent='▶ Run comparison';
@@ -1255,7 +1301,7 @@ function drawCompareCurves(curveA, curveB, tumorR){
   ctx.beginPath();ctx.moveTo(tx,pad.t);ctx.lineTo(tx,pad.t+cH);ctx.stroke();
   ctx.setLineDash([]);
   ctx.fillStyle='rgba(0,229,255,.5)';ctx.font='10px Space Mono,monospace';
-  ctx.fillText('tumor wall',tx+4,pad.t+13);
+  ctx.fillText(currentLang==='zh'?'肿瘤壁':'tumor wall',tx+4,pad.t+13);
 
   // curve A (blue)
   ctx.strokeStyle='#4d9eff'; ctx.lineWidth=2.5; ctx.lineJoin='round';
@@ -1274,6 +1320,37 @@ function drawCompareCurves(curveA, curveB, tumorR){
   ctx.fillText('Radial distance from tumor center (px)',pad.l+cW/2-130,H-6);
 }
 
+/* compare exports */
+let cmpLastResult=null;
+
+function exportCmpCSV(){
+  if(!cmpLastResult)return;
+  const{curveA,curveB,pA,pB}=cmpLastResult;
+  const rows=[
+    ['radial_px', `${pA.label}_C`, `${pB.label}_C`],
+    ...curveA.map((v,i)=>[i, v.toFixed(6), (curveB[i]||0).toFixed(6)])
+  ];
+  const csv=rows.map(r=>r.join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download=`PDEOncology_compare_${pA.label}_vs_${pB.label}.csv`;
+  a.click();
+}
+
+function exportCmpPNG(ab){
+  const a=document.createElement('a');
+  a.href=document.getElementById('cmp-heatmap-'+ab).toDataURL('image/png');
+  a.download=`PDEOncology_heatmap_Drug${ab}.png`;
+  a.click();
+}
+
+function exportCmpCurve(){
+  const a=document.createElement('a');
+  a.href=document.getElementById('cmp-curve').toDataURL('image/png');
+  a.download=`PDEOncology_compare_curves.png`;
+  a.click();
+}
+
 function resetCompare(){
   ['cmp-heatmap-A','cmp-heatmap-B','cmp-curve'].forEach(id=>{
     const c=document.getElementById(id);if(!c)return;
@@ -1288,6 +1365,392 @@ function resetCompare(){
 loadPreset();
 loadCmpPreset('A');
 loadCmpPreset('B');
+
+/* =========================================================
+   LANGUAGE SYSTEM — PDEOncology
+========================================================= */
+let currentLang='en';
+
+const T={
+  /* NAV */
+  'nav-about':        {en:'About',               zh:'关于'},
+  'nav-simulation':   {en:'Simulation',           zh:'模拟'},
+  'nav-ai':           {en:'AI Drug Input',        zh:'AI 输入'},
+  'nav-compare':      {en:'Compare',              zh:'对比'},
+  'nav-results':      {en:'Results',              zh:'结果'},
+  'nav-database':     {en:'Drug Database',        zh:'药物数据库'},
+  'lang-btn':         {en:'切换中文',              zh:'Switch to English'},
+  'outreach-link':    {en:'PDEOutreach ↗',        zh:'PDEOutreach ↗'},
+
+  /* LOADER */
+  'loader-text':      {en:'INITIALISING SIMULATION ENGINE', zh:'正在初始化模拟引擎'},
+
+  /* ── ABOUT ── */
+  'about-hero-sub':   {en:'A browser-based platform for simulating tumor drug penetration using reaction-diffusion partial differential equations (PDEs). Designed for researchers, educators, and clinicians who want to explore how drug physicochemical properties and tumor microenvironment interact to determine therapeutic efficacy.',
+                       zh:'一个基于浏览器的肿瘤药物渗透模拟平台，使用反应-扩散偏微分方程（PDE）建模。面向希望探索药物理化性质与肿瘤微环境如何共同决定治疗效果的研究者、教育工作者和临床医生。'},
+  'about-motivation-title': {en:'MOTIVATION', zh:'研究动机'},
+  'about-motivation-p1': {en:'Drug resistance and treatment failure in solid tumors are often not purely pharmacological — they are physical. Even potent drugs can fail to reach the tumor core due to elevated interstitial fluid pressure (IFP), dense extracellular matrix, and poor vascularisation. These barriers are especially pronounced in pancreatic ductal adenocarcinoma, glioblastoma, and triple-negative breast cancer.',
+                           zh:'实体肿瘤中的耐药性和治疗失败，往往不是纯粹的药理学问题——而是物理问题。即使是强效药物，也可能因间质液压升高（IFP）、细胞外基质致密以及血管分布不良，而无法到达肿瘤核心。这些障碍在胰腺导管腺癌、胶质母细胞瘤和三阴性乳腺癌中尤为突出。'},
+  'about-motivation-p2': {en:'PDEOncology provides an accessible simulation environment to visualise these phenomena. By adjusting diffusion coefficient D, degradation rate λ, and uptake rate k, users can intuitively explore how molecular weight, metabolic stability, and receptor expression shape drug distribution — without requiring a computational background.',
+                           zh:'PDEOncology 提供了一个易于使用的模拟环境来可视化这些现象。通过调整扩散系数 D、降解率 λ 和摄取率 k，用户无需计算背景即可直观探索分子量、代谢稳定性和受体表达如何影响药物分布。'},
+  'about-motivation-p3': {en:'The AI integration (Claude API) goes one step further: users can describe a drug and tumor in plain English and receive biophysically grounded PDE parameters derived from published literature, enabling rapid hypothesis generation.',
+                           zh:'AI 集成（Claude API）更进一步：用户可以用自然语言描述药物和肿瘤，获得来自已发表文献的生物物理学参数，从而快速生成研究假设。'},
+  'about-howworks-title': {en:'HOW IT WORKS', zh:'工作原理'},
+  'about-num-title':   {en:'Numerical method',    zh:'数值方法'},
+  'about-num-p':       {en:'Explicit finite difference (FTCS scheme) on a 2D uniform grid. Stability enforced via CFL: <code>dt ≤ dx²/(4D)</code>. Grid represents a 1 cm × 1 cm tissue section.',
+                        zh:'基于二维均匀网格的显式有限差分法（FTCS格式）。通过 CFL 条件保证稳定性：<code>dt ≤ dx²/(4D)</code>。网格代表 1 cm × 1 cm 的组织截面。'},
+  'about-tumor-title': {en:'Tumor geometry',      zh:'肿瘤几何模型'},
+  'about-tumor-p':     {en:'Circular tumor geometry with a radially-graded cell density field ρ(x,y). Diffusion coefficient D attenuated in tumor core to simulate IFP and extracellular matrix barriers.',
+                        zh:'圆形肿瘤几何体，具有径向分级的细胞密度场 ρ(x,y)。肿瘤核心的扩散系数 D 被衰减，以模拟 IFP 和细胞外基质屏障。'},
+  'about-ai-title':    {en:'AI integration',      zh:'AI 集成'},
+  'about-ai-p':        {en:'Uses Claude API to extract biophysically grounded PDE parameters from natural-language descriptions. Falls back to local database when offline.',
+                        zh:'使用 Claude API 从自然语言描述中提取具有生物物理依据的 PDE 参数。离线时自动回退到本地数据库。'},
+  'about-delivery-title': {en:'Delivery modes',   zh:'给药方式'},
+  'about-delivery-p':  {en:'<strong>IV Infusion</strong> — Left boundary maintained at C = 1.0, simulating systemic drug delivery. <strong>Vascular ring</strong> — Annular ring surrounding the tumor. <strong>Intratumoral injection</strong> — Point source at tumor centre.',
+                        zh:'<strong>静脉输注</strong>——左边界维持 C = 1.0，模拟全身给药。<strong>血管环</strong>——肿瘤周围环形给药。<strong>瘤内注射</strong>——肿瘤中心点源给药。'},
+  'about-quickstart-title': {en:'QUICKSTART',     zh:'快速开始'},
+  'about-qs1-title':   {en:'Pick a preset',       zh:'选择预设'},
+  'about-qs1-p':       {en:'Go to <strong>Simulation</strong>, select a drug and tumor type. Parameters auto-fill from the built-in database.',
+                        zh:'进入<strong>模拟</strong>页面，选择药物和肿瘤类型。参数将从内置数据库自动填入。'},
+  'about-qs2-title':   {en:'Or use AI',           zh:'或使用 AI'},
+  'about-qs2-p':       {en:'Go to <strong>AI Drug Input</strong>, describe your drug + tumor in plain English. Claude fills the parameters automatically.',
+                        zh:'进入 <strong>AI 输入</strong>，用自然语言描述药物和肿瘤。Claude 会自动填写参数。'},
+  'about-qs3-title':   {en:'Run & animate',       zh:'运行与动画'},
+  'about-qs3-p':       {en:'Click <strong>Run simulation</strong>. A 20-frame diffusion animation appears — hit Play to watch drug spread over time.',
+                        zh:'点击<strong>运行模拟</strong>。20帧扩散动画自动生成——点击播放查看药物随时间扩散的过程。'},
+  'about-qs4-title':   {en:'Export',              zh:'导出'},
+  'about-qs4-p':       {en:'Go to <strong>Results</strong> to view analytics, read the report, and export CSV or PNG.',
+                        zh:'进入<strong>结果</strong>页面查看分析报告，并导出 CSV 或 PNG 文件。'},
+  'about-params-title':{en:'PDE PARAMETERS',      zh:'PDE 参数说明'},
+  'about-lim-title':   {en:'LIMITATIONS & ASSUMPTIONS', zh:'局限性与假设'},
+  'about-lim-p':       {en:'PDEOncology is an educational and exploratory tool. Simplifications include: circular homogeneous geometry, 2D model, static density fields, no convective transport, normalised dimensionless parameters, first-order time accuracy.',
+                        zh:'PDEOncology 是一个教育与探索工具。简化包括：圆形均匀几何体、二维模型、静态密度场、无对流输运、归一化无量纲参数、一阶时间精度。'},
+  'about-disclaimer':  {en:'Results are model approximations and should not be used for clinical decision-making.',
+                        zh:'模拟结果为模型近似，不应用于临床决策。'},
+  'about-team-title':  {en:'PROJECT TEAM',        zh:'项目团队'},
+  'about-refs-title':  {en:'REFERENCES',          zh:'参考文献'},
+  'about-version-title':{en:'VERSION HISTORY',   zh:'版本历史'},
+
+  /* ── SIMULATION ── */
+  'sim-params-title':  {en:'PARAMETERS',          zh:'参数设置'},
+  'sim-drug-label':    {en:'Drug',                zh:'药物'},
+  'sim-tumor-label':   {en:'Tumor type',          zh:'肿瘤类型'},
+  'sim-mode-label':    {en:'Delivery mode',       zh:'给药方式'},
+  'sim-mode-iv':       {en:'IV Infusion (left boundary)', zh:'静脉输注（左边界）'},
+  'sim-mode-ring':     {en:'Vascular ring',       zh:'血管环'},
+  'sim-mode-point':    {en:'Intratumoral injection', zh:'瘤内注射'},
+  'sim-run-btn':       {en:'▶ Run simulation',    zh:'▶ 运行模拟'},
+  'sim-reset-btn':     {en:'Reset',               zh:'重置'},
+  'sim-view-btn':      {en:'View results →',      zh:'查看结果 →'},
+  'sim-heatmap-title': {en:'Concentration heatmap', zh:'浓度热力图'},
+  'sim-curve-title':   {en:'Radial penetration curve', zh:'径向渗透曲线'},
+  'sim-anim-title':    {en:'Diffusion animation', zh:'扩散动画'},
+  'sim-play-btn':      {en:'▶ Play',              zh:'▶ 播放'},
+  'sim-prev-btn':      {en:'◀ Prev',              zh:'◀ 上一帧'},
+  'sim-next-btn':      {en:'Next ▶',              zh:'下一帧 ▶'},
+  'sim-reset-anim-btn':{en:'⟳ Reset',             zh:'⟳ 重置'},
+  'sim-frame-label':   {en:'Frame',               zh:'帧'},
+  'sim-speed-label':   {en:'Speed',               zh:'速度'},
+  'sim-m-tavg':        {en:'Tumor avg C',         zh:'肿瘤平均C'},
+  'sim-m-max':         {en:'Max C',               zh:'最大C'},
+  'sim-m-depth':       {en:'50% depth',           zh:'50%深度'},
+  'sim-m-cov':         {en:'Coverage',            zh:'覆盖率'},
+
+  /* ── AI ── */
+  'ai-title':          {en:'AI Drug Input',       zh:'AI 药物输入'},
+  'ai-sub':            {en:'Describe a drug and tumor in plain English. Claude extracts biophysically grounded PDE parameters and loads them into the simulator.',
+                        zh:'用自然语言描述药物和肿瘤。Claude 将提取具有生物物理依据的 PDE 参数并自动载入模拟器。'},
+  'ai-key-title':      {en:'API key',             zh:'API 密钥'},
+  'ai-key-p':          {en:'Session-only — sent directly to <code>api.anthropic.com</code> via CORS proxy. Never logged.',
+                        zh:'仅限本次会话使用——通过 CORS 代理直接发送至 <code>api.anthropic.com</code>，不记录日志。'},
+  'ai-key-save':       {en:'Save',                zh:'保存'},
+  'ai-desc-title':     {en:'Describe your simulation', zh:'描述你的模拟'},
+  'ai-desc-label':     {en:'Drug + tumor description', zh:'药物 + 肿瘤描述'},
+  'ai-desc-placeholder':{en:'e.g. Simulate gemcitabine in pancreatic ductal adenocarcinoma with high stromal density.',
+                         zh:'例如：模拟吉西他滨在高基质密度胰腺导管腺癌中的渗透情况。'},
+  'ai-ask-btn':        {en:'Ask Claude ↗',        zh:'询问 Claude ↗'},
+  'ai-clear-btn':      {en:'Clear',               zh:'清除'},
+  'ai-response-label': {en:'Claude response',     zh:'Claude 回复'},
+  'ai-params-title':   {en:'Extracted parameters', zh:'提取的参数'},
+  'ai-apply-btn':      {en:'Apply & go to Simulation →', zh:'应用并前往模拟 →'},
+
+  /* ── COMPARE ── */
+  'cmp-title':         {en:'Drug Compare',        zh:'药物对比'},
+  'cmp-sub':           {en:'Simulate two drugs on the same tumor side-by-side.',
+                        zh:'在同一肿瘤上并排模拟两种药物，对比渗透效果。'},
+  'cmp-shared-title':  {en:'SHARED TUMOR SETTINGS', zh:'共享肿瘤设置'},
+  'cmp-tumor-label':   {en:'Tumor type',          zh:'肿瘤类型'},
+  'cmp-mode-label':    {en:'Delivery mode',       zh:'给药方式'},
+  'cmp-steps-label':   {en:'Steps',               zh:'步数'},
+  'cmp-run-btn':       {en:'▶ Run comparison',    zh:'▶ 运行对比'},
+  'cmp-reset-btn':     {en:'Reset',               zh:'重置'},
+  'cmp-overlay-title': {en:'Penetration curves — overlay', zh:'渗透曲线叠加'},
+  'cmp-summary-title': {en:'Comparison summary',  zh:'对比总结'},
+  'cmp-export-csv':    {en:'Export CSV',          zh:'导出 CSV'},
+  'cmp-export-a':      {en:'Save heatmap A',      zh:'保存热力图 A'},
+  'cmp-export-b':      {en:'Save heatmap B',      zh:'保存热力图 B'},
+  'cmp-export-curve':  {en:'Save curve PNG',      zh:'保存曲线图'},
+
+  /* ── RESULTS ── */
+  'res-title':         {en:'Results & Report',    zh:'结果与报告'},
+  'res-sub':           {en:'Run a simulation first, then return here for analytics and export.',
+                        zh:'请先运行模拟，然后返回此页面查看分析结果并导出。'},
+  'res-empty':         {en:'No simulation data yet.',zh:'暂无模拟数据。'},
+  'res-goto-sim':      {en:'Go to Simulation →',  zh:'前往模拟 →'},
+  'res-heatmap-title': {en:'Concentration heatmap', zh:'浓度热力图'},
+  'res-curve-title':   {en:'Radial penetration curve', zh:'径向渗透曲线'},
+  'res-params-title':  {en:'Simulation parameters', zh:'模拟参数'},
+  'res-report-title':  {en:'Report summary',      zh:'报告摘要'},
+  'res-export-csv':    {en:'Export CSV',          zh:'导出 CSV'},
+  'res-export-png':    {en:'Save heatmap PNG',    zh:'保存热力图 PNG'},
+  'res-print':         {en:'Print report',        zh:'打印报告'},
+
+  /* ── DATABASE ── */
+  'db-title':          {en:'Drug Database',       zh:'药物数据库'},
+  'db-sub':            {en:'Built-in parameter library. Click any row to load into the simulator.',
+                        zh:'内置参数库。点击任意行可将参数载入模拟器。'},
+  'db-search-ph':      {en:'Search drug, tumor, class…', zh:'搜索药物、肿瘤、类别…'},
+  'db-all-tumors':     {en:'All tumors',          zh:'全部肿瘤'},
+  'db-all-diff':       {en:'All difficulty',      zh:'全部难度'},
+  'db-about-title':    {en:'About these parameters', zh:'关于这些参数'},
+  'db-about-p':        {en:'D scaled relative to free diffusion in water. Uptake rates reflect receptor expression. Degradation accounts for metabolic clearance.',
+                        zh:'D 值相对于水中自由扩散进行归一化。摄取率反映受体表达水平。降解率反映代谢清除率。'},
+  'db-sources':        {en:'Sources: Jain RK (1987), Nugent & Jain (1984), Thurber et al. (2008), Chauhan et al. (2011).',
+                        zh:'来源：Jain RK (1987)、Nugent & Jain (1984)、Thurber 等 (2008)、Chauhan 等 (2011)。'},
+  'db-load-btn':       {en:'Load →',              zh:'载入 →'},
+
+  /* FOOTER */
+  'footer-copy':       {en:'Tumor Drug Penetration Simulator — research & educational use only',
+                        zh:'肿瘤药物渗透模拟器 — 仅供研究与教育使用'},
+  'footer-github':     {en:'GitHub ↗',            zh:'GitHub ↗'},
+};
+
+function applyLang(lang){
+  currentLang=lang;
+  document.getElementById('lang-btn').textContent=T['lang-btn'][lang];
+  document.documentElement.lang=lang==='zh'?'zh-CN':'en';
+
+  // all data-i18n elements
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key=el.getAttribute('data-i18n');
+    if(!T[key])return;
+    const val=T[key][lang];
+    if(el.tagName==='INPUT'&&el.type==='text'){el.placeholder=val;}
+    else if(el.tagName==='OPTION'){el.textContent=val;}
+    else{el.innerHTML=val;}
+  });
+
+  // nav buttons
+  document.querySelectorAll('#nav button[data-i18n]').forEach(btn=>{
+    const key=btn.getAttribute('data-i18n');
+    if(T[key])btn.textContent=T[key][lang];
+  });
+
+  // select options that need translation
+  const modeMap={
+    'left_boundary': T['sim-mode-iv'][lang],
+    'ring':          T['sim-mode-ring'][lang],
+    'point':         T['sim-mode-point'][lang],
+  };
+  ['mode-select','cmp-mode'].forEach(id=>{
+    const sel=document.getElementById(id);
+    if(!sel)return;
+    Array.from(sel.options).forEach(opt=>{
+      if(modeMap[opt.value])opt.textContent=modeMap[opt.value];
+    });
+  });
+
+  // tumor type options — all selects
+  const tumorMap={
+    'breast':     {en:'Breast cancer',    zh:'乳腺癌'},
+    'pancreatic': {en:'Pancreatic cancer',zh:'胰腺癌'},
+    'glioma':     {en:'Glioma',           zh:'胶质瘤'},
+    'melanoma':   {en:'Melanoma',         zh:'黑色素瘤'},
+    'colorectal': {en:'Colorectal',       zh:'结直肠癌'},
+  };
+  ['tumor-select','cmp-tumor'].forEach(id=>{
+    const sel=document.getElementById(id);if(!sel)return;
+    Array.from(sel.options).forEach(opt=>{
+      if(tumorMap[opt.value])opt.textContent=tumorMap[opt.value][lang];
+    });
+  });
+  // db filter tumor
+  const dbTumor=document.getElementById('db-filter-tumor');
+  if(dbTumor){Array.from(dbTumor.options).forEach(opt=>{
+    if(opt.value===''){ opt.textContent=T['db-all-tumors'][lang];}
+    else if(tumorMap[opt.value]){opt.textContent=tumorMap[opt.value][lang];}
+  });}
+
+  // drug options — all selects
+  const drugMap={
+    'doxorubicin':  {en:'Doxorubicin',      zh:'多柔比星'},
+    'paclitaxel':   {en:'Paclitaxel',       zh:'紫杉醇'},
+    'cisplatin':    {en:'Cisplatin',        zh:'顺铂'},
+    'gemcitabine':  {en:'Gemcitabine',      zh:'吉西他滨'},
+    'trastuzumab':  {en:'Trastuzumab (ADC)',zh:'曲妥珠单抗 (ADC)'},
+    'custom':       {en:'Custom (AI)',      zh:'自定义 (AI)'},
+    '5-fluorouracil':{en:'5-Fluorouracil', zh:'5-氟尿嘧啶'},
+    'temozolomide': {en:'Temozolomide',     zh:'替莫唑胺'},
+    'dacarbazine':  {en:'Dacarbazine',      zh:'达卡巴嗪'},
+  };
+  ['drug-select','cmpA-drug','cmpB-drug'].forEach(id=>{
+    const sel=document.getElementById(id);if(!sel)return;
+    Array.from(sel.options).forEach(opt=>{
+      if(drugMap[opt.value])opt.textContent=drugMap[opt.value][lang];
+    });
+  });
+
+  // team member descriptions
+  const teamDescY=document.getElementById('team-desc-Y');
+  const teamDescT=document.getElementById('team-desc-T');
+  if(teamDescY)teamDescY.innerHTML=lang==='zh'
+    ?'设计并构建了完整的 PDEOncology 平台——包括有限差分 PDE 求解器、交互式可视化引擎、Claude API 集成、中英文双语系统及全部前端界面。同时主导 PDEOutreach 的开发工作。'
+    :'Designed and built the full PDEOncology platform from the ground up — including the finite difference PDE solver, interactive visualisation engine, AI integration via Claude API, bilingual language system, and the complete frontend interface. Also leads the development of PDEOutreach.';
+  if(teamDescT)teamDescT.innerHTML=lang==='zh'
+    ?'负责项目的研究与内容开发——从已发表文献中整理药物参数数据库、收集生物物理学参考资料，并主导 PDEOutreach 及合作社交媒体渠道的科学传播与推广工作。'
+    :'Leads the research and content development for the project — curating the drug parameter database from published literature, sourcing biophysical references, and driving outreach and science communication across PDEOutreach and partner social media channels.';
+  // db search placeholder
+  const dbSearch=document.getElementById('db-search');
+  if(dbSearch)dbSearch.placeholder=T['db-search-ph'][lang];
+
+  // tumor filter options
+  const tumorFilter=document.getElementById('db-filter-tumor');
+  if(tumorFilter){
+    tumorFilter.options[0].textContent=T['db-all-tumors'][lang];
+    Array.from(tumorFilter.options).forEach(opt=>{
+      if(tumorMap[opt.value])opt.textContent=tumorMap[opt.value][lang];
+    });
+  }
+
+  // difficulty filter — translate all options
+  const diffFilter=document.getElementById('db-filter-diff');
+  const diffMap={
+    '':         {en:'All difficulty', zh:'全部难度'},
+    'low':      {en:'Low',            zh:'低'},
+    'medium':   {en:'Medium',         zh:'中'},
+    'high':     {en:'High',           zh:'高'},
+    'very high':{en:'Very high',      zh:'极高'},
+  };
+  if(diffFilter){
+    Array.from(diffFilter.options).forEach(opt=>{
+      if(diffMap[opt.value])opt.textContent=diffMap[opt.value][lang];
+    });
+  }
+
+  // re-render DB table so tumor names update in rows
+  if(typeof renderDB==='function')renderDB();
+
+  // PDE parameters table
+  const pdeRows={
+    'th-param':    {en:'Parameter',     zh:'参数'},
+    'th-symbol':   {en:'Symbol',        zh:'符号'},
+    'th-meaning':  {en:'Meaning',       zh:'含义'},
+    'th-range':    {en:'Typical range', zh:'典型范围'},
+    'th-basis':    {en:'Physical basis',zh:'物理依据'},
+    'p-D-name':    {en:'Diffusion coefficient', zh:'扩散系数'},
+    'p-D-meaning': {en:'Rate of drug spread through tissue', zh:'药物在组织中的扩散速率'},
+    'p-D-basis':   {en:'Molecular weight, tissue tortuosity, ECM density', zh:'分子量、组织曲折度、ECM密度'},
+    'p-lam-name':  {en:'Degradation rate', zh:'降解率'},
+    'p-lam-meaning':{en:'First-order drug breakdown', zh:'一阶药物降解'},
+    'p-lam-basis': {en:'Metabolic clearance, plasma half-life', zh:'代谢清除率、血浆半衰期'},
+    'p-k-name':    {en:'Uptake rate',    zh:'摄取率'},
+    'p-k-meaning': {en:'Drug absorption by tumor cells', zh:'肿瘤细胞对药物的吸收'},
+    'p-k-basis':   {en:'Receptor/transporter expression, endocytosis rate', zh:'受体/转运体表达、内吞速率'},
+    'p-rho-name':  {en:'Cell density',  zh:'细胞密度'},
+    'p-rho-meaning':{en:'Spatial distribution of tumor cells', zh:'肿瘤细胞空间分布'},
+    'p-rho-basis': {en:'Histological packing, necrotic core fraction', zh:'组织学填充密度、坏死核比例'},
+    'p-r-name':    {en:'Tumor radius',  zh:'肿瘤半径'},
+    'p-r-meaning': {en:'Radius of tumor region in grid units', zh:'网格单位下的肿瘤区域半径'},
+    'p-r-basis':   {en:'Tumour volume, imaging-derived size estimate', zh:'肿瘤体积、影像学估算尺寸'},
+  };
+  Object.entries(pdeRows).forEach(([id,t])=>{const el=document.getElementById(id);if(el)el.textContent=t[lang];});
+
+  // results section headings and metric labels
+  const resHeadings={
+    'r-drug-label':  {en:'Drug',                    zh:'药物'},
+    'r-tumor-label': {en:'Tumor',                   zh:'肿瘤'},
+    'r-tavg-label':  {en:'Tumor avg C',             zh:'肿瘤平均浓度'},
+    'r-depth-label': {en:'50% depth',               zh:'50%深度'},
+    'res-heatmap-h': {en:'Concentration heatmap',   zh:'浓度热力图'},
+    'res-curve-h':   {en:'Radial penetration curve',zh:'径向渗透曲线'},
+    'res-params-h':  {en:'Simulation parameters',   zh:'模拟参数'},
+    'res-report-h':  {en:'Report summary',          zh:'报告摘要'},
+    'res-th-param':  {en:'Parameter',               zh:'参数'},
+    'res-th-sym':    {en:'Symbol',                  zh:'符号'},
+    'res-th-val':    {en:'Value',                   zh:'值'},
+    'vh-changes-th': {en:'Changes',                 zh:'更新内容'},
+  };
+  Object.entries(resHeadings).forEach(([id,t])=>{const el=document.getElementById(id);if(el)el.textContent=t[lang];});
+
+  // re-render results report if available (translates report text + param table)
+  if(typeof renderResults==='function'&&simResult)renderResults();
+
+  // version history table — translate changes column
+  const vhRows=document.querySelectorAll('#version-history-tbody tr');
+  const vhZh=[
+    '20帧扩散动画播放器（播放/暂停/拖拽/速度），对比 tab——双药并排对比，带叠加渗透曲线和自动对比总结，favicon，About 页面完善（文献+团队）',
+    'UI 全面升级——Space Mono / Inter 字体、深色学术主题、网格背景、加载动画、热力图+曲线渲染升级、移动端适配',
+    'Cloudflare Worker CORS 代理、Claude API 集成、本地数据库 fallback、5 个 Tab 布局、药物数据库（21 条）、CSV/PNG 导出',
+    '初始版本——FDM PDE 求解器、浓度热力图、径向渗透曲线、3 种给药模式',
+    '数据库扩充（50+ 条）、Claude 生成个性化报告、参数扫描模式',
+  ];
+  if(vhRows.length){
+    vhRows.forEach((tr,i)=>{
+      const td=tr.cells[2];
+      if(!td)return;
+      if(lang==='zh'&&vhZh[i])td.textContent=vhZh[i];
+      else if(lang==='en'){
+        const enTexts=[
+          '20-frame diffusion animation player (Play/Pause/Scrub/Speed), Compare tab — dual-drug side-by-side with overlay penetration curves and auto-generated comparison summary, favicon, About tab complete with references and team',
+          'UI embellish — Space Mono / Inter fonts, dark academic theme, grid background, loader animation, upgraded heatmap + curve rendering, mobile responsive',
+          'Cloudflare Worker CORS proxy, Claude API integration, AI fallback to local database, 5-tab layout, drug database (21 entries), CSV/PNG export',
+          'Initial release — FDM PDE solver, heatmap visualisation, radial penetration curve, 3 delivery modes',
+          'Drug database expansion (50+ entries), Claude-generated Results report, parameter sweep mode',
+        ];
+        if(enTexts[i])td.textContent=enTexts[i];
+      }
+    });
+  }
+
+  // loader text
+  const lt=document.getElementById('loader-text');
+  if(lt)lt.textContent=T['loader-text'][lang];
+
+  // AI input placeholder
+  const aiInput=document.getElementById('ai-input');
+  if(aiInput)aiInput.placeholder=T['ai-desc-placeholder'][lang];
+
+  // api key placeholder
+  const apiInput=document.getElementById('api-key-input');
+  if(apiInput)apiInput.placeholder=lang==='zh'?'sk-ant-api03-…（密钥）':'sk-ant-api03-…';
+
+  // run/action buttons by id
+  const btnMap={
+    'run-btn':      T['sim-run-btn'][lang],
+    'play-btn':     T['sim-play-btn'][lang],
+    'ai-btn':       T['ai-ask-btn'][lang],
+    'cmp-run-btn':  T['cmp-run-btn'][lang],
+    'prec-btn':     T['cmp-run-btn'][lang],
+  };
+  Object.entries(btnMap).forEach(([id,txt])=>{
+    const el=document.getElementById(id);
+    if(el&&!el.disabled)el.textContent=txt;
+  });
+
+  // metric labels
+  const metricMap={
+    'm-tavg':T['sim-m-tavg'][lang],'m-max':T['sim-m-max'][lang],
+    'm-depth':T['sim-m-depth'][lang],'m-cov':T['sim-m-cov'][lang],
+  };
+  Object.entries(metricMap).forEach(([id,label])=>{
+    const el=document.getElementById(id);
+    if(el){const lb=el.previousElementSibling;if(lb&&lb.classList.contains('metric-label'))lb.textContent=label;}
+  });
+}
+
+function toggleLang(){
+  applyLang(currentLang==='en'?'zh':'en');
+}
 </script>
 </body>
 </html>
