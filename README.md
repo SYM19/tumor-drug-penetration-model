@@ -209,7 +209,7 @@ Leads research and content development — curating the drug parameter database 
 
 ## Related
 
-- **[PDEOutreach](https://sym19.github.io/pdeoutreach)** — the public-facing companion platform. Cancer science explained for everyone, with interactive quizzes, risk profiles, and real patient stories.
+- **[PDEOutreach](https://pdeoutreach.com)** — the public-facing companion platform. Cancer science explained for everyone, with interactive quizzes, risk profiles, and real patient stories.
 
 ---
 
