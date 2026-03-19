@@ -210,35 +210,119 @@
     /* ── LATEX / CODE BOX ── */
     .code-box{background:#030507;border:1px solid var(--border);border-radius:var(--radius);padding:1rem;font-family:var(--mono);font-size:.72rem;color:#b8d4ff;line-height:1.8;overflow-x:auto;white-space:pre;max-height:360px;overflow-y:auto;}
 
-    @media(max-width:900px){.grid-2,.grid-3{grid-template-columns:1fr;}}
-    @media(max-width:600px){
-      .grid-4{grid-template-columns:1fr 1fr;}
-      .grid-5{grid-template-columns:1fr 1fr;}
-      main{padding:1rem;}
-      header{padding:0 1rem;}
-      .hero-title{font-size:1.4rem;}
-      .formula-box{font-size:.72rem;padding:.75rem 1rem;overflow-x:auto;white-space:nowrap;}
-      .slider-name{width:90px;font-size:.68rem;}
-      .slider-val{width:44px;font-size:.7rem;}
-      .canvas-box{width:100%;}
-      .metric-value{font-size:1.1rem;}
-      .btn{padding:7px 14px;font-size:.78rem;}
-      .code-box{font-size:.65rem;}
-      .hero{padding:1.5rem 0 1rem;}
-      .card{padding:1rem;}
-      footer{flex-direction:column;align-items:flex-start;gap:6px;}
-      /* flex children with min-width: stack vertically on mobile */
-      [style*="min-width:240px"],[style*="min-width:300px"]{min-width:0!important;width:100%!important;flex:1 1 100%!important;}
+    /* ── TABLET ── */
+    @media(max-width:900px){
+      .grid-2,.grid-3{grid-template-columns:1fr;}
     }
+
+    /* ── MOBILE 768px ── */
     @media(max-width:768px){
+      /* Header: logo row + nav row */
       header{height:auto;flex-wrap:wrap;padding:0.6rem 1rem;}
       .logo{margin-right:auto;}
       .header-right{margin-left:0;gap:6px;}
       .outreach-link{display:none;}
       .v-badge{display:none;}
-      nav{width:100%;order:3;flex:none;height:auto;border-top:1px solid rgba(99,130,166,.12);margin-top:0.5rem;padding-top:0.4rem;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+      nav{
+        width:100%;order:3;flex:none;height:auto;
+        border-top:1px solid rgba(99,130,166,.12);
+        margin-top:0.5rem;padding-top:0.4rem;
+        overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+      }
       nav::-webkit-scrollbar{display:none;}
       nav button{padding:6px 14px;font-size:0.72rem;white-space:nowrap;flex-shrink:0;height:34px;}
+
+      /* Main layout */
+      main{padding:0.875rem;}
+
+      /* Hero */
+      .hero{padding:1.25rem 0 0.75rem;}
+      .hero-title{font-size:1.3rem;}
+      .formula-box{font-size:.68rem;padding:.75rem 1rem;overflow-x:auto;white-space:nowrap;}
+      .hero-chips{gap:6px;}
+      .hero-chip{font-size:.65rem;padding:3px 10px;}
+
+      /* Cards */
+      .card{padding:.875rem;}
+      .card-header{margin-bottom:.75rem;padding-bottom:.5rem;}
+
+      /* Grids */
+      .grid-4{grid-template-columns:1fr 1fr;}
+      .grid-5{grid-template-columns:1fr 1fr;}
+
+      /* Simulation: controls stack above canvas */
+      .grid-2.section > div,
+      .grid-2 > div { width: 100%; }
+
+      /* Sliders */
+      .slider-row{gap:8px;margin-bottom:10px;}
+      .slider-name{width:82px;font-size:.66rem;line-height:1.3;}
+      .slider-val{width:42px;font-size:.68rem;}
+      .slider-hint{font-size:.65rem;margin-bottom:8px;line-height:1.5;}
+      .help-btn{width:18px;height:18px;font-size:.6rem;flex-shrink:0;}
+
+      /* Canvas: cap height so it doesn't dominate */
+      .canvas-box{width:100%;}
+      canvas{max-height:320px;object-fit:contain;}
+
+      /* Metrics */
+      .metric{padding:.6rem .75rem;}
+      .metric-value{font-size:1rem;}
+      .metric-label{font-size:.62rem;}
+
+      /* Buttons */
+      .btn{padding:7px 12px;font-size:.76rem;}
+      .btn-row{gap:6px;margin-top:.75rem;}
+
+      /* Code/text */
+      .code-box{font-size:.63rem;max-height:260px;}
+      p{font-size:.82rem;}
+
+      /* Footer */
+      footer{flex-direction:column;align-items:flex-start;gap:6px;padding:.875rem 1rem;}
+
+      /* Simulation: inner drug/tumor select grid → 1 col on mobile */
+      #sim-main-grid .card > div[style*="grid-template-columns:1fr 1fr"]{
+        grid-template-columns:1fr!important;
+      }
+
+      /* Animation panel: always stack */
+      [style*="min-width:240px"],
+      [style*="min-width:300px"]{
+        min-width:0!important;width:100%!important;flex:1 1 100%!important;
+      }
+
+      /* IFP highlight */
+      .ifp-highlight{padding:.75rem;}
+
+      /* Table */
+      th,td{padding:6px 8px;font-size:.75rem;}
+
+      /* Validation cards */
+      .val-dataset-card{padding:.75rem 1rem;}
+
+      /* Upload zone */
+      .upload-zone{padding:1.25rem;}
+
+      /* Tags */
+      .tag{font-size:.62rem;padding:2px 6px;}
+
+      /* Summary/details */
+      details > summary{font-size:.78rem;}
+    }
+
+    /* ── SMALL MOBILE 480px ── */
+    @media(max-width:480px){
+      .hero-title{font-size:1.15rem;}
+      .grid-4{grid-template-columns:1fr 1fr;}
+      .grid-5{grid-template-columns:1fr 1fr;}
+      nav button{padding:5px 10px;font-size:.68rem;}
+      .formula-box{font-size:.63rem;}
+      canvas{max-height:260px;}
+      .metric-value{font-size:.95rem;}
+      .btn{padding:6px 10px;font-size:.72rem;}
+      main{padding:0.75rem;}
+      .card{padding:.75rem;}
     }
   </style>
 </head>
@@ -419,7 +503,7 @@
           </div>
         </details>
       </div>
-      <div class="grid-2 section">
+      <div class="grid-2 section" id="sim-main-grid">
         <div class="card">
           <div class="card-header"><div class="card-icon">⚙</div><h2 style="margin:0;">Parameters</h2></div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;">
