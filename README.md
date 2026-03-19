@@ -1,7 +1,7 @@
 # PDEOncology — Tumor Drug Penetration Simulator
 
 [![Live Demo](https://img.shields.io/badge/demo-pdeoncology.com-4d9eff?style=flat-square)](https://pdeoncology.com)
-[![Version](https://img.shields.io/badge/version-v0.4-3de383?style=flat-square)](https://pdeoncology.com)
+[![Version](https://img.shields.io/badge/version-v0.5-3de383?style=flat-square)](https://pdeoncology.com)
 [![License](https://img.shields.io/badge/license-MIT-f0a54a?style=flat-square)](LICENSE)
 [![PDEOutreach](https://img.shields.io/badge/outreach-PDEOutreach-a78bfa?style=flat-square)](https://sym19.github.io/pdeoutreach)
 
