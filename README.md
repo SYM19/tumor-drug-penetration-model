@@ -5,10 +5,10 @@
 [![License](https://img.shields.io/badge/license-MIT-f0a54a?style=flat-square)](LICENSE)
 [![PDEOutreach](https://img.shields.io/badge/outreach-PDEOutreach-a78bfa?style=flat-square)](https://sym19.github.io/pdeoutreach)
 
-A browser-based platform for simulating tumor drug penetration using **reaction-diffusion partial differential equations (PDEs)**. All computation runs client-side in JavaScript — no server, no installation required. Available in English and Chinese (中英双语).
+A browser-based platform for simulating tumor drug penetration using **reaction-diffusion partial differential equations (PDEs)**. All computation runs client-side in JavaScript — no server, no installation required.
 
 🔗 **Live site:** [pdeoncology.com](https://pdeoncology.com)  
-🌐 **Public outreach:** [pdeoutreach.com](https://pdeoutreach.com) — cancer science for everyone
+🌐 **Public outreach:** [pdeoutreach.com](https://pdeoutreach.com) — oncology for everyone (education purpose only) 
 
 ---
 
@@ -16,12 +16,11 @@ A browser-based platform for simulating tumor drug penetration using **reaction-
 
 Drug resistance and treatment failure in solid tumors are often not purely pharmacological — they are **physical**. Even potent drugs can fail to reach the tumor core due to:
 
-- Elevated interstitial fluid pressure (IFP) / 升高的间质液压
-- Dense extracellular matrix (ECM) / 致密的细胞外基质
-- Poor vascularisation / 血管分布不良
+- Elevated interstitial fluid pressure (IFP) 
+- Dense extracellular matrix (ECM) 
+- Poor vascularisation 
 
-PDEOncology provides an interactive simulation environment to visualise these phenomena. Users can explore how molecular weight, metabolic stability, and receptor expression shape drug distribution — without requiring a computational background.
-
+PDEOncology provides an interactive simulation environment to visualise the effect of cancer drugs on 2D-modelled tumours. Users can explore how molecular weight, metabolic stability, and receptor expression shape drug distribution with parameters adjusted.
 ---
 
 ## The PDE Model
@@ -54,7 +53,6 @@ Drug concentration C(x,y,t) evolves according to the **reaction-diffusion equati
 | **Compare Mode** | Two drugs on same tumor — side-by-side heatmaps, overlay curves, auto summary |
 | **Drug Database** | 21 drug × tumor combinations, searchable and filterable |
 | **Results & Export** | Auto-generated report, CSV export, PNG export, print |
-| **Bilingual** | Full Chinese/English language toggle (中英双语) |
 | **3 Delivery modes** | IV infusion / vascular ring / intratumoral injection |
 
 ---
@@ -67,7 +65,7 @@ Drug concentration C(x,y,t) evolves according to the **reaction-diffusion equati
 | Fonts | Space Mono + Inter (Google Fonts) |
 | PDE solver | Custom FTCS finite difference (pure JS) |
 | Visualisation | HTML5 Canvas API |
-| AI integration | Anthropic Claude API (`claude-sonnet-4`) |
+| AI integration | Anthropic Claude API (`claude-sonnet-4.5`) |
 | CORS proxy | Cloudflare Workers (free tier) |
 | Hosting | GitHub Pages |
 | Domain | pdeoncology.com |
@@ -155,7 +153,7 @@ export default {
 
 ## Limitations
 
-PDEOncology is an educational and exploratory tool. Key simplifications:
+PDEOncology is an educational and research-facilitating tool. Key simplifications:
 
 - Tumor geometry is circular and homogeneous — real tumors are irregular
 - 2D model only — real drug penetration is three-dimensional
@@ -193,15 +191,17 @@ PDEOncology is an educational and exploratory tool. Key simplifications:
 
 ## Team
 
-**Yumeng S.** — Technical Development, Website Engineering, UI Design, PDE Implementation  
-*NSFZ · IB*
+**Y. Shi**
+Full-Stack Engineer & Systems Architect
+• Systems Architecture: Engineered the end-to-end technical infrastructure, including server-side logic, hosting, and API integrations.
+• UI/UX Engineering: Designed and implemented high-performance, interactive frontends focused on complex data visualization and user accessibility.
+• Technical Coordination: Managed the deployment pipeline and cross-platform localization to ensure a seamless public-facing interface.
 
-Designed and built the full PDEOncology platform — including the finite difference PDE solver, interactive visualisation engine, Claude API integration, bilingual language system, and the complete frontend interface.
-
-**Tracey Y.** — Literature Research, Drug Database, Science Communication, Outreach & Promotion  
-*Wycombe Abbey · UK*
-
-Leads research and content development — curating the drug parameter database from published literature, sourcing biophysical references, and driving outreach across PDEOutreach and social media channels.
+**T. Yang**
+Scientific Lead & Computational Biologist
+• Biophysical Modelling: Developed the core PDE solvers and mathematical frameworks for simulating complex reaction-diffusion-convection systems.
+• Data Science & Validation: Built robust parameter-sweep frameworks and conversion pipelines to validate theoretical models against experimental and clinical data.
+• Research Leadership: Curated comprehensive biophysical databases and led the translation of high-level research into structured, open-source documentation.
 
 
 ---
