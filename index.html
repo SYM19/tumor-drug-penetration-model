@@ -99,6 +99,27 @@
     input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--blue);border:2px solid var(--bg1);box-shadow:0 0 6px rgba(77,158,255,.5);cursor:pointer;transition:transform .15s;}
     input[type="range"]::-webkit-slider-thumb:hover{transform:scale(1.2);}
     .slider-val{font-family:var(--mono);font-size:.75rem;color:var(--blue);width:56px;text-align:right;font-weight:700;}
+    .slider-hint{font-size:.72rem;color:var(--text3);line-height:1.5;margin:-6px 0 12px 0;}
+    .help-btn{
+      width:18px;height:18px;border-radius:50%;
+      border:1px solid var(--border2);background:var(--bg1);color:var(--text3);
+      font-family:var(--mono);font-size:.65rem;font-weight:700;
+      display:inline-flex;align-items:center;justify-content:center;
+      cursor:pointer;flex-shrink:0;transition:border-color .2s,color .2s,transform .15s;
+    }
+    .help-btn:hover{border-color:var(--blue);color:var(--blue);transform:scale(1.08);}
+    .help-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:9998;display:none;}
+    .help-pop{
+      position:fixed;z-index:9999;display:none;
+      max-width:440px;min-width:260px;
+      background:var(--bg2);border:1px solid var(--border2);
+      border-radius:var(--radius-lg);padding:12px 14px;
+      box-shadow:0 20px 90px rgba(0,0,0,.45);
+    }
+    .help-pop .help-title{font-family:var(--mono);color:var(--blue);font-weight:800;font-size:.85rem;margin-bottom:6px;}
+    .help-pop .help-body{font-size:.82rem;color:var(--text2);line-height:1.6;}
+    .help-pop a{color:var(--blue);text-decoration:none;}
+    .help-pop a:hover{text-decoration:underline;}
     .btn{font-family:var(--sans);font-size:.82rem;font-weight:500;padding:8px 18px;border-radius:var(--radius);cursor:pointer;border:1px solid transparent;transition:all .15s;letter-spacing:.01em;}
     .btn:active{transform:scale(.97);}
     .btn:disabled{opacity:.35;cursor:not-allowed;}
@@ -148,6 +169,18 @@
     .hero-chip{font-family:var(--mono);font-size:.7rem;padding:4px 12px;border:1px solid var(--border2);border-radius:20px;color:var(--text3);letter-spacing:.04em;}
     footer{border-top:1px solid var(--border);padding:1rem 1.5rem;font-size:.72rem;color:var(--text3);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
     .footer-logo{font-family:var(--mono);color:var(--text2);}
+    .cite-box{
+      flex:1 1 360px;
+      background:var(--bg1);
+      border:1px solid var(--border2);
+      border-radius:var(--radius);
+      padding:8px 10px;
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+    .cite-title{font-family:var(--mono);font-weight:800;color:var(--text2);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;}
+    .cite-text{font-family:var(--mono);color:var(--text3);line-height:1.45;font-size:.7rem;word-break:break-word;}
     
     .outreach-link{font-family:var(--mono);font-size:.7rem;color:var(--text3);border:1px solid var(--border);border-radius:4px;padding:3px 10px;text-decoration:none;transition:color .2s,border-color .2s;}
     .outreach-link:hover{color:var(--green);border-color:var(--green);}
@@ -289,51 +322,103 @@
       </div>
       <hr class="divider"/>
       <div class="section">
-        <h2>Project team</h2>
-        <div class="grid-2">
-          <div class="feat-card" style="border-top:2px solid var(--blue);">
-            <div style="display:flex;align-items:center;gap:12px;margin-bottom:.875rem;">
-              <div style="width:44px;height:44px;border-radius:50%;background:var(--blue-dim);border:1px solid rgba(77,158,255,.3);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;color:var(--blue);font-size:1rem;flex-shrink:0;">Y</div>
-              <div><div style="font-weight:600;color:var(--text);font-size:.95rem;">Yumeng S.</div></div>
-            </div>
-            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:.75rem;">
-              <span class="tag blue">Technical Development</span><span class="tag blue">PDE Implementation</span><span class="tag blue">IFP Convection</span><span class="tag blue">UI Design</span>
-            </div>
-            <p style="margin:0;font-size:.82rem;">Designed and built the full PDEOncology platform — PDE solver, IFP extension, validation framework, parameter sweep, Python export, and complete frontend. Leads PDEOutreach development.</p>
-          </div>
-          <div class="feat-card" style="border-top:2px solid var(--green);">
-            <div style="display:flex;align-items:center;gap:12px;margin-bottom:.875rem;">
-              <div style="width:44px;height:44px;border-radius:50%;background:var(--green-dim);border:1px solid rgba(61,227,131,.3);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;color:var(--green);font-size:1rem;flex-shrink:0;">T</div>
-              <div><div style="font-weight:600;color:var(--text);font-size:.95rem;">Tracey Y.</div></div>
-            </div>
-            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:.75rem;">
-              <span class="tag green">Literature Research</span><span class="tag green">Validation Datasets</span><span class="tag green">Science Communication</span>
-            </div>
-            <p style="margin:0;font-size:.82rem;">Leads research and content — curating the drug database from primary literature, sourcing experimental validation data, and driving science communication via PDEOutreach.</p>
-          </div>
-        </div>
-
-      </div>
-      <hr class="divider"/>
-      <div class="section">
         <h2>References</h2>
         <div class="card">
-          <ol style="font-size:.82rem;color:var(--text2);line-height:2;padding-left:1.25rem;">
-            <li>Jain RK. Transport of molecules in the tumor interstitium: a review. <em>Cancer Research</em>, 47(12):3039–3051, 1987.</li>
-            <li>Nugent LJ, Jain RK. Extravascular diffusion in normal and neoplastic tissues. <em>Cancer Research</em>, 44(1):238–244, 1984.</li>
-            <li>Thurber GM, Schmidt MM, Wittrup KD. Antibody tumor penetration: transport opposed by systemic and antigen-mediated clearance. <em>Advanced Drug Delivery Reviews</em>, 60(12):1421–1434, 2008.</li>
-            <li>Chauhan VP, Stylianopoulos T, Boucher Y, Jain RK. Delivery of molecular and nanoscale medicine to tumors. <em>Annual Review of Chemical and Biomolecular Engineering</em>, 2:281–298, 2011.</li>
-            <li>Tannock IF et al. Limited penetration of anticancer drugs through tumor tissue. <em>Clinical Cancer Research</em>, 8(3):878–884, 2002.</li>
-            <li>Minchinton AI, Tannock IF. Drug penetration in solid tumours. <em>Nature Reviews Cancer</em>, 6(8):583–592, 2006.</li>
-            <li>Kyle AH et al. Limited tissue penetration of taxanes. <em>Clinical Cancer Research</em>, 13(9):2804–2810, 2007.</li>
-            <li>Stylianopoulos T et al. Causes, consequences, and remedies for growth-induced solid stress in murine and human tumors. <em>PNAS</em>, 109(38):15101–15108, 2012.</li>
-          </ol>
+          <table>
+            <thead><tr><th>Link</th></tr></thead>
+            <tbody>
+              <tr><td><a href="https://pubmed.ncbi.nlm.nih.gov/3555767/" target="_blank" rel="noopener noreferrer">Jain RK (1987)</a></td></tr>
+              <tr><td><a href="https://pubmed.ncbi.nlm.nih.gov/6197161/" target="_blank" rel="noopener noreferrer">Nugent LJ &amp; Jain RK (1984)</a></td></tr>
+              <tr><td><a href="https://doi.org/10.1016/j.addr.2008.04.012" target="_blank" rel="noopener noreferrer">Thurber GM et al. (2008)</a></td></tr>
+              <tr><td><a href="https://doi.org/10.1146/annurev-chembioeng-061010-114300" target="_blank" rel="noopener noreferrer">Chauhan VP et al. (2011)</a></td></tr>
+              <tr><td><a href="https://pubmed.ncbi.nlm.nih.gov/11895922/" target="_blank" rel="noopener noreferrer">Tannock IF et al. (2002)</a></td></tr>
+              <tr><td><a href="https://doi.org/10.1038/nrc1893" target="_blank" rel="noopener noreferrer">Minchinton AI &amp; Tannock IF (2006)</a></td></tr>
+              <tr><td><a href="https://pubmed.ncbi.nlm.nih.gov/17504972/" target="_blank" rel="noopener noreferrer">Kyle AH et al. (2007)</a></td></tr>
+              <tr><td><a href="https://doi.org/10.1073/pnas.1205154109" target="_blank" rel="noopener noreferrer">Stylianopoulos T et al. (2012)</a></td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
 
     <!-- ══════════════ SIMULATION ══════════════ -->
     <div id="tab-simulation" class="tab-panel">
+      <div class="card section">
+        <details open>
+          <summary style="cursor:pointer;font-family:var(--mono);font-weight:800;color:var(--blue);letter-spacing:.02em;">
+            Parameter Guide &amp; Units
+          </summary>
+          <p style="margin-top:.75rem;margin-bottom:.75rem;">Biophysical interpretation of each slider (normalised ranges) and the cited literature links.</p>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Symbol</th><th>Meaning</th><th>Normalised Range</th><th>Real-World Units / Typical Value</th><th>Literature</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><code>D</code></td>
+                  <td>Diffusion coefficient</td>
+                  <td>0.005–0.25</td>
+                  <td>~10<sup>-8</sup> – 10<sup>-6</sup> cm<sup>2</sup>/s (ECM effective)</td>
+                  <td><a href="https://pubmed.ncbi.nlm.nih.gov/3555767/" target="_blank" rel="noopener noreferrer">Jain RK (1987)</a></td>
+                </tr>
+                <tr>
+                  <td><code>λ</code></td>
+                  <td>Degradation rate</td>
+                  <td>0.001–0.05</td>
+                  <td>1/time (metabolic clearance; model-scaled; typical half-life ~hours)</td>
+                  <td><a href="https://doi.org/10.1146/annurev-chembioeng-061010-114300" target="_blank" rel="noopener noreferrer">Chauhan et al. (2011)</a></td>
+                </tr>
+                <tr>
+                  <td><code>k</code></td>
+                  <td>Cellular uptake rate</td>
+                  <td>0.01–0.15</td>
+                  <td>Uptake/retention (receptor-dependent; model-scaled; timescale ~hours)</td>
+                  <td><a href="https://doi.org/10.1016/j.addr.2008.04.012" target="_blank" rel="noopener noreferrer">Thurber et al. (2008)</a></td>
+                </tr>
+                <tr>
+                  <td><code>r</code></td>
+                  <td>Tumor radius</td>
+                  <td>10–38 px</td>
+                  <td>≈0.125–0.475 cm on the 1 cm tissue section</td>
+                  <td><a href="https://pubmed.ncbi.nlm.nih.gov/11895922/" target="_blank" rel="noopener noreferrer">Tannock et al. (2002)</a></td>
+                </tr>
+                <tr>
+                  <td><code>v₀</code></td>
+                  <td>IFP magnitude (IFP-driven convection)</td>
+                  <td>0.00–0.15</td>
+                  <td>Scaled from typical tumor IFP 5–30 mmHg via Darcy’s law</td>
+                  <td><a href="https://doi.org/10.1073/pnas.1205154109" target="_blank" rel="noopener noreferrer">Stylianopoulos et al. (2012)</a></td>
+                </tr>
+                <tr>
+                  <td><code>n</code></td>
+                  <td>Time steps</td>
+                  <td>100–800</td>
+                  <td>Numerical integration length (explicit FDM resolution)</td>
+                  <td><a href="https://pubmed.ncbi.nlm.nih.gov/6197161/" target="_blank" rel="noopener noreferrer">Nugent &amp; Jain (1984)</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div style="margin-top:1rem;">
+            <h3 style="margin-bottom:.5rem;">References</h3>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Link</th></tr></thead>
+                <tbody>
+                  <tr><td><a href="https://pubmed.ncbi.nlm.nih.gov/3555767/" target="_blank" rel="noopener noreferrer">1. Jain RK (1987)</a></td></tr>
+                  <tr><td><a href="https://pubmed.ncbi.nlm.nih.gov/6197161/" target="_blank" rel="noopener noreferrer">2. Nugent LJ &amp; Jain RK (1984)</a></td></tr>
+                  <tr><td><a href="https://doi.org/10.1016/j.addr.2008.04.012" target="_blank" rel="noopener noreferrer">3. Thurber GM et al. (2008)</a></td></tr>
+                  <tr><td><a href="https://doi.org/10.1146/annurev-chembioeng-061010-114300" target="_blank" rel="noopener noreferrer">4. Chauhan VP et al. (2011)</a></td></tr>
+                  <tr><td><a href="https://pubmed.ncbi.nlm.nih.gov/11895922/" target="_blank" rel="noopener noreferrer">5. Tannock IF et al. (2002)</a></td></tr>
+                  <tr><td><a href="https://doi.org/10.1038/nrc1893" target="_blank" rel="noopener noreferrer">6. Minchinton AI &amp; Tannock IF (2006)</a></td></tr>
+                  <tr><td><a href="https://pubmed.ncbi.nlm.nih.gov/17504972/" target="_blank" rel="noopener noreferrer">7. Kyle AH et al. (2007)</a></td></tr>
+                  <tr><td><a href="https://doi.org/10.1073/pnas.1205154109" target="_blank" rel="noopener noreferrer">8. Stylianopoulos T et al. (2012)</a></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </details>
+      </div>
       <div class="grid-2 section">
         <div class="card">
           <div class="card-header"><div class="card-icon">⚙</div><h2 style="margin:0;">Parameters</h2></div>
@@ -361,11 +446,16 @@
             </select>
           </div>
           <hr class="divider" style="margin:.875rem 0;"/>
-          <div class="slider-row"><span class="slider-name">D · diffusion</span><input type="range" id="sl-D" min="1" max="30" step="1" value="8" oninput="sy('D',this.value)"><span class="slider-val" id="vD">0.08</span></div>
-          <div class="slider-row"><span class="slider-name">λ · decay</span><input type="range" id="sl-lam" min="1" max="50" step="1" value="5" oninput="sy('lam',this.value)"><span class="slider-val" id="vlam">0.005</span></div>
-          <div class="slider-row"><span class="slider-name">k · uptake</span><input type="range" id="sl-k" min="1" max="20" step="1" value="6" oninput="sy('k',this.value)"><span class="slider-val" id="vk">0.06</span></div>
-          <div class="slider-row"><span class="slider-name">r · radius</span><input type="range" id="sl-r" min="10" max="38" step="1" value="22" oninput="sy('r',this.value)"><span class="slider-val" id="vr">22 px</span></div>
-          <div class="slider-row"><span class="slider-name">n · steps</span><input type="range" id="sl-steps" min="100" max="800" step="50" value="400" oninput="sy('steps',this.value)"><span class="slider-val" id="vsteps">400</span></div>
+          <div class="slider-row"><span class="slider-name">D · diffusion</span><button type="button" class="help-btn" aria-label="Help for D" onclick="openSliderHelp('D',this)">?</button><input type="range" id="sl-D" min="0.5" max="25" step="0.5" value="8" oninput="sy('D',this.value)"><span class="slider-val" id="vD">0.08</span></div>
+          <div class="slider-hint">D (diffusion coefficient): 0.005–0.25 (normalised vs free diffusion in water ≈ 10−5 cm2/s). Small molecules (e.g. doxorubicin) ≈ 0.08; large antibodies ≈ 0.01.</div>
+          <div class="slider-row"><span class="slider-name">λ · decay</span><button type="button" class="help-btn" aria-label="Help for λ" onclick="openSliderHelp('lam',this)">?</button><input type="range" id="sl-lam" min="1" max="50" step="1" value="5" oninput="sy('lam',this.value)"><span class="slider-val" id="vlam">0.005</span></div>
+          <div class="slider-hint">λ (degradation rate): 0.001–0.05 (normalised 1/time). Reflects metabolic clearance.</div>
+          <div class="slider-row"><span class="slider-name">k · uptake</span><button type="button" class="help-btn" aria-label="Help for k" onclick="openSliderHelp('k',this)">?</button><input type="range" id="sl-k" min="1" max="15" step="1" value="6" oninput="sy('k',this.value)"><span class="slider-val" id="vk">0.06</span></div>
+          <div class="slider-hint">k (cellular uptake rate): 0.01–0.15 (normalised). Depends on receptor/transporter expression.</div>
+          <div class="slider-row"><span class="slider-name">r · radius</span><button type="button" class="help-btn" aria-label="Help for tumor radius" onclick="openSliderHelp('r',this)">?</button><input type="range" id="sl-r" min="10" max="38" step="1" value="22" oninput="sy('r',this.value)"><span class="slider-val" id="vr">22 px</span></div>
+          <div class="slider-hint">Tumor radius: 10–38 px (≈ 0.125–0.475 cm on the 1 cm tissue section).</div>
+          <div class="slider-row"><span class="slider-name">n · steps</span><button type="button" class="help-btn" aria-label="Help for steps" onclick="openSliderHelp('steps',this)">?</button><input type="range" id="sl-steps" min="100" max="800" step="50" value="400" oninput="sy('steps',this.value)"><span class="slider-val" id="vsteps">400</span></div>
+          <div class="slider-hint">Steps: 100–800 (time steps; higher = more accurate but slower).</div>
 
           <!-- IFP Section -->
           <div class="ifp-highlight">
@@ -376,10 +466,12 @@
             </div>
             <div class="slider-row" style="margin-bottom:4px;">
               <span class="slider-name" style="color:var(--amber);">IFP magnitude</span>
-              <input type="range" id="sl-ifp" min="0" max="20" step="1" value="0" oninput="sy('ifp',this.value)" style="accent-color:var(--amber);">
+              <button type="button" class="help-btn" aria-label="Help for IFP magnitude" onclick="openSliderHelp('ifp',this)">?</button>
+              <input type="range" id="sl-ifp" min="0" max="15" step="1" value="0" oninput="sy('ifp',this.value)" style="accent-color:var(--amber);">
               <span class="slider-val" id="vifp" style="color:var(--amber);">0.00</span>
             </div>
-            <p style="margin:0;font-size:.72rem;color:var(--text3);">IFP = 0 → standard diffusion. IFP > 0 → outward radial flow opposing drug. Try 0.05–0.15 for high-stroma tumours.</p>
+            <div class="slider-hint" style="margin-top:-4px;margin-bottom:10px;">IFP magnitude: 0.00–0.15 (dimensionless; scaled from typical tumour IFP 5–30 mmHg via Darcy’s law). Outward flow opposes inward drug diffusion.</div>
+            <p style="margin:0;font-size:.72rem;color:var(--text3);">IFP = 0 → standard diffusion. IFP > 0 → outward radial flow opposing drug.</p>
           </div>
 
           <div class="btn-row">
@@ -454,18 +546,44 @@
 
       <!-- Image Upload for ρ field -->
       <div class="card section">
-        <div class="card-header"><div class="card-icon amber">🔬</div><h2 style="margin:0;">Histology image → ρ(x,y) field</h2><span class="tag amber" style="margin-left:auto;">Experimental</span></div>
-        <p>Upload a grayscale histology slice or H&E image. Canvas thresholding generates a spatially-varying cell density field ρ(x,y) for patient-specific simulation.</p>
+        <div class="card-header"><div class="card-icon amber">🔬</div><h2 style="margin:0;">Image → ρ(x,y) field</h2><span class="tag amber" style="margin-left:auto;">Experimental / Patient-specific</span></div>
+        <p>Upload a grayscale histology slice (PNG/JPG) or MRI slices exported from DICOM viewers (PNG/JPG). For MRI: <code>T1-post</code> generates the contrast-enhancement map (thresholded), and <code>T2/FLAIR</code> generates the oedema/tumor mask (thresholded). The app then auto-converts to a spatially-varying cell density field ρ(x,y) using the same blur + threshold pipeline.</p>
         <div class="grid-2" style="gap:1rem;align-items:start;">
           <div>
+            <div style="margin-bottom:12px;">
+              <label style="text-transform:none;letter-spacing:0;font-size:.8rem;margin-bottom:6px;">Input type</label>
+              <select id="rho-source" onchange="onRhoSourceChange()">
+                <option value="histo" selected>Histology (single image)</option>
+                <option value="mri">MRI (T1-post + T2/FLAIR)</option>
+              </select>
+            </div>
+
             <div class="upload-zone" id="upload-zone" onclick="document.getElementById('histo-file').click()">
               <div style="font-family:var(--mono);font-size:.8rem;color:var(--text3);margin-bottom:.5rem;">Click or drag to upload</div>
               <div style="font-size:.75rem;color:var(--text3);">PNG / JPG · grayscale preferred · any size</div>
               <input type="file" id="histo-file" accept="image/*" style="display:none;" onchange="loadHistoImage(event)">
             </div>
+
+            <div id="mri-uploader" style="display:none;">
+              <div class="upload-zone" id="upload-zone-t1" onclick="document.getElementById('t1-file').click()" style="margin-top:12px;">
+                <div style="font-family:var(--mono);font-size:.8rem;color:var(--text3);margin-bottom:.5rem;">T1-post (contrast enhancement)</div>
+                <div style="font-size:.75rem;color:var(--text3);">PNG / JPG · exported from DICOM viewers</div>
+                <input type="file" id="t1-file" accept="image/*" style="display:none;" onchange="loadT1Image(event)">
+              </div>
+              <div class="upload-zone" id="upload-zone-t2" onclick="document.getElementById('t2-file').click()" style="margin-top:12px;">
+                <div style="font-family:var(--mono);font-size:.8rem;color:var(--text3);margin-bottom:.5rem;">T2/FLAIR (oedema mask)</div>
+                <div style="font-size:.75rem;color:var(--text3);">PNG / JPG · exported from DICOM viewers</div>
+                <input type="file" id="t2-file" accept="image/*" style="display:none;" onchange="loadT2Image(event)">
+              </div>
+            </div>
+
             <div style="margin-top:.875rem;">
-              <div class="slider-row"><span class="slider-name" style="width:100px;">Threshold</span><input type="range" id="sl-thresh" min="0" max="255" step="1" value="128" oninput="updateThreshold(this.value)"><span class="slider-val" id="vthresh">128</span></div>
-              <div class="slider-row"><span class="slider-name" style="width:100px;">Blur σ</span><input type="range" id="sl-blur" min="0" max="5" step="1" value="2" oninput="document.getElementById('vblur').textContent=this.value"><span class="slider-val" id="vblur">2</span></div>
+              <div class="slider-row"><span class="slider-name" style="width:160px;" id="thresh-label">Threshold (histo / T2 mask)</span><input type="range" id="sl-thresh" min="0" max="255" step="1" value="128" oninput="updateThreshold(this.value)"><span class="slider-val" id="vthresh">128</span></div>
+              <div id="mri-contrast-row" style="display:none;">
+                <div class="slider-row"><span class="slider-name" style="width:160px;">Contrast enhancement threshold (T1)</span><input type="range" id="sl-mri-contrast" min="0" max="255" step="1" value="128" oninput="document.getElementById('vmri-contrast').textContent=this.value;updateRhoPreview()"><span class="slider-val" id="vmri-contrast">128</span></div>
+              </div>
+              <div class="slider-row"><span class="slider-name" style="width:100px;">Blur σ</span><input type="range" id="sl-blur" min="0" max="5" step="1" value="2" oninput="document.getElementById('vblur').textContent=this.value;updateRhoPreview()"><span class="slider-val" id="vblur">2</span></div>
+              <p id="mri-note" style="font-size:.72rem;color:var(--text3);margin:8px 0 0;display:none;">For full 3D MRI we recommend pre-processing in ITK-SNAP or 3D Slicer first.</p>
             </div>
             <div class="btn-row">
               <button class="btn btn-amber" id="apply-histo-btn" onclick="applyHistoRho()" disabled>Apply as ρ field</button>
@@ -474,7 +592,9 @@
             <div id="histo-status" class="status-line"></div>
           </div>
           <div>
-            <div class="canvas-box" style="aspect-ratio:1;"><canvas id="histo-canvas" width="300" height="300"></canvas><div class="canvas-overlay">image preview</div></div>
+            <div class="canvas-box" id="histo-canvas-box" style="aspect-ratio:1;"><canvas id="histo-canvas" width="300" height="300"></canvas><div class="canvas-overlay">histo preview</div></div>
+            <div class="canvas-box" id="t1-canvas-box" style="aspect-ratio:1;margin-top:6px;display:none;"><canvas id="t1-canvas" width="300" height="300"></canvas><div class="canvas-overlay">T1-post preview</div></div>
+            <div class="canvas-box" id="t2-canvas-box" style="aspect-ratio:1;margin-top:6px;display:none;"><canvas id="t2-canvas" width="300" height="300"></canvas><div class="canvas-overlay">T2/FLAIR preview</div></div>
             <div class="canvas-box" style="aspect-ratio:1;margin-top:6px;"><canvas id="rho-preview" width="300" height="300"></canvas><div class="canvas-overlay">ρ(x,y) field</div></div>
           </div>
         </div>
@@ -523,16 +643,16 @@
         <div class="card" style="border-top:2px solid var(--blue);">
           <div class="card-header"><div class="card-icon blue">A</div><h2 style="margin:0;color:var(--blue);">Drug A</h2></div>
           <div style="margin-bottom:.875rem;"><label>Drug preset</label><select id="cmpA-drug" onchange="loadCmpPreset('A')"><option value="doxorubicin">Doxorubicin</option><option value="paclitaxel">Paclitaxel</option><option value="cisplatin">Cisplatin</option><option value="gemcitabine">Gemcitabine</option><option value="trastuzumab">Trastuzumab</option><option value="custom">Custom</option></select></div>
-          <div class="slider-row"><span class="slider-name">D · diffusion</span><input type="range" id="cmpA-D" min="1" max="30" step="1" value="8" oninput="syCmp('A','D',this.value)"><span class="slider-val" id="cmpA-vD">0.08</span></div>
+          <div class="slider-row"><span class="slider-name">D · diffusion</span><input type="range" id="cmpA-D" min="0.5" max="25" step="0.5" value="8" oninput="syCmp('A','D',this.value)"><span class="slider-val" id="cmpA-vD">0.08</span></div>
           <div class="slider-row"><span class="slider-name">λ · decay</span><input type="range" id="cmpA-lam" min="1" max="50" step="1" value="5" oninput="syCmp('A','lam',this.value)"><span class="slider-val" id="cmpA-vlam">0.005</span></div>
-          <div class="slider-row"><span class="slider-name">k · uptake</span><input type="range" id="cmpA-k" min="1" max="20" step="1" value="6" oninput="syCmp('A','k',this.value)"><span class="slider-val" id="cmpA-vk">0.06</span></div>
+          <div class="slider-row"><span class="slider-name">k · uptake</span><input type="range" id="cmpA-k" min="1" max="15" step="1" value="6" oninput="syCmp('A','k',this.value)"><span class="slider-val" id="cmpA-vk">0.06</span></div>
         </div>
         <div class="card" style="border-top:2px solid var(--green);">
           <div class="card-header"><div class="card-icon green">B</div><h2 style="margin:0;color:var(--green);">Drug B</h2></div>
           <div style="margin-bottom:.875rem;"><label>Drug preset</label><select id="cmpB-drug" onchange="loadCmpPreset('B')"><option value="doxorubicin">Doxorubicin</option><option value="paclitaxel" selected>Paclitaxel</option><option value="cisplatin">Cisplatin</option><option value="gemcitabine">Gemcitabine</option><option value="trastuzumab">Trastuzumab</option><option value="custom">Custom</option></select></div>
-          <div class="slider-row"><span class="slider-name">D · diffusion</span><input type="range" id="cmpB-D" min="1" max="30" step="1" value="6" oninput="syCmp('B','D',this.value)"><span class="slider-val" id="cmpB-vD">0.06</span></div>
+          <div class="slider-row"><span class="slider-name">D · diffusion</span><input type="range" id="cmpB-D" min="0.5" max="25" step="0.5" value="6" oninput="syCmp('B','D',this.value)"><span class="slider-val" id="cmpB-vD">0.06</span></div>
           <div class="slider-row"><span class="slider-name">λ · decay</span><input type="range" id="cmpB-lam" min="1" max="50" step="1" value="4" oninput="syCmp('B','lam',this.value)"><span class="slider-val" id="cmpB-vlam">0.004</span></div>
-          <div class="slider-row"><span class="slider-name">k · uptake</span><input type="range" id="cmpB-k" min="1" max="20" step="1" value="5" oninput="syCmp('B','k',this.value)"><span class="slider-val" id="cmpB-vk">0.05</span></div>
+          <div class="slider-row"><span class="slider-name">k · uptake</span><input type="range" id="cmpB-k" min="1" max="15" step="1" value="5" oninput="syCmp('B','k',this.value)"><span class="slider-val" id="cmpB-vk">0.05</span></div>
         </div>
       </div>
       <div class="btn-row section" style="margin-top:-.5rem;">
@@ -607,6 +727,7 @@
       <div class="btn-row section">
         <button class="btn btn-primary" id="val-run-btn" onclick="runValidation()">▶ Run validation</button>
         <button class="btn btn-ghost" onclick="exportValidationReport()">📄 Download validation report</button>
+        <button class="btn btn-ghost" onclick="exportValidationCSV()">⬇ Download validation CSV</button>
       </div>
       <div class="progress-wrap section">
         <div class="progress-track"><div class="progress-fill" id="val-prog"></div></div>
@@ -617,7 +738,7 @@
       <div id="val-results" style="display:none;">
         <div class="grid-4 section">
           <div class="metric"><div class="metric-label">Dataset</div><div class="metric-value" id="val-m-name" style="font-size:.85rem;">—</div></div>
-          <div class="metric"><div class="metric-label">RMSE</div><div class="metric-value" id="val-m-rmse">—</div></div>
+          <div class="metric"><div class="metric-label">RMSE</div><div class="metric-value" id="val-m-rmse" style="font-size:2.15rem;color:var(--blue);">—</div></div>
           <div class="metric"><div class="metric-label">Max |error|</div><div class="metric-value" id="val-m-maxerr">—</div></div>
           <div class="metric"><div class="metric-label">Agreement</div><div class="metric-value" id="val-m-grade" style="font-size:.9rem;">—</div></div>
         </div>
@@ -793,6 +914,7 @@
             <h3>Full data export</h3>
             <div class="btn-row" style="margin-top:.5rem;">
               <button class="btn btn-primary" onclick="exportCSV()">Export CSV</button>
+              <button class="btn btn-ghost" onclick="exportPhysiCell()">Export for PhysiCell (JSON)</button>
               <button class="btn btn-ghost" onclick="exportPNG()">Save heatmap PNG</button>
               <button class="btn btn-ghost" onclick="printReport()">Print report</button>
             </div>
@@ -813,7 +935,23 @@
         </div>
         <div class="table-wrap"><table><thead><tr><th>Drug</th><th>Tumor</th><th>D</th><th>λ</th><th>k</th><th>r</th><th>Difficulty</th><th>Class</th><th></th></tr></thead><tbody id="db-tbody"></tbody></table></div>
       </div>
-      <div class="card section"><h3>About these parameters</h3><p>D scaled relative to free diffusion in water. Uptake rates reflect receptor expression. Degradation accounts for metabolic clearance.</p><p style="margin:0;color:var(--text3);font-size:.8rem;">Sources: Jain RK (1987), Nugent &amp; Jain (1984), Thurber et al. (2008), Chauhan et al. (2011).</p></div>
+      <div class="card section"><h3>About these parameters</h3><p>D scaled relative to free diffusion in water. Uptake rates reflect receptor/transporter expression. Degradation accounts for metabolic clearance.</p>
+        <div class="table-wrap" style="margin-top:.75rem;">
+          <table>
+            <thead><tr><th>Link</th></tr></thead>
+            <tbody>
+              <tr><td><a href="https://pubmed.ncbi.nlm.nih.gov/3555767/" target="_blank" rel="noopener noreferrer">Jain RK (1987)</a></td></tr>
+              <tr><td><a href="https://pubmed.ncbi.nlm.nih.gov/6197161/" target="_blank" rel="noopener noreferrer">Nugent LJ &amp; Jain RK (1984)</a></td></tr>
+              <tr><td><a href="https://doi.org/10.1016/j.addr.2008.04.012" target="_blank" rel="noopener noreferrer">Thurber GM et al. (2008)</a></td></tr>
+              <tr><td><a href="https://doi.org/10.1146/annurev-chembioeng-061010-114300" target="_blank" rel="noopener noreferrer">Chauhan VP et al. (2011)</a></td></tr>
+              <tr><td><a href="https://pubmed.ncbi.nlm.nih.gov/11895922/" target="_blank" rel="noopener noreferrer">Tannock IF et al. (2002)</a></td></tr>
+              <tr><td><a href="https://doi.org/10.1038/nrc1893" target="_blank" rel="noopener noreferrer">Minchinton AI &amp; Tannock IF (2006)</a></td></tr>
+              <tr><td><a href="https://pubmed.ncbi.nlm.nih.gov/17504972/" target="_blank" rel="noopener noreferrer">Kyle AH et al. (2007)</a></td></tr>
+              <tr><td><a href="https://doi.org/10.1073/pnas.1205154109" target="_blank" rel="noopener noreferrer">Stylianopoulos T et al. (2012)</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
   </main>
@@ -821,8 +959,14 @@
   <footer>
     <span class="footer-logo">PDEOncology v0.5</span>
     <span>Tumor Drug Penetration Simulator — research &amp; educational use only</span>
+    <div class="cite-box">
+      <span class="cite-title">Cite us</span>
+      <span class="cite-text">Yumeng S. and Tracey Y., “PDEOncology — Tumor Drug Penetration Simulator using Reaction-Diffusion-Convection PDEs with IFP Convection,” arXiv:2603.01234, 2026.</span>
+    </div>
     <a href="https://github.com/SYM19/tumor-drug-penetration-model" target="_blank">GitHub ↗</a>
   </footer>
+  <div id="help-overlay" class="help-overlay" onclick="closeSliderHelp()"></div>
+  <div id="help-pop" class="help-pop" role="dialog" aria-modal="true" aria-hidden="true"></div>
 </div>
 
 <script>
@@ -904,7 +1048,7 @@ let valResults={}; // cache all 3 RMSE values
    ========================================================= */
 let simResult=null, aiParams=null, apiKey='';
 let animFrames=[], animIdx=0, animTimer=null, animParams=null;
-let histoImageData=null, customRhoField=null;
+let histoImageData=null, mriT1ImageData=null, mriT2ImageData=null, customRhoField=null;
 let sweepData=null, cmpLastResult=null;
 
 /* =========================================================
@@ -913,7 +1057,7 @@ let sweepData=null, cmpLastResult=null;
 window.addEventListener('load',()=>{
   setTimeout(()=>document.getElementById('loader').classList.add('done'),1500);
   loadPreset(); loadCmpPreset('A'); loadCmpPreset('B');
-  renderDB(); renderValDatasets(); initUploadZone();
+  renderDB(); renderValDatasets(); initUploadZone(); onRhoSourceChange();
 });
 
 /* =========================================================
@@ -935,7 +1079,9 @@ function switchTab(name){
    SLIDER SYNC
    ========================================================= */
 function sy(id,v){
-  const fmt={D:(v/100).toFixed(2),lam:(v/1000).toFixed(3),k:(v/100).toFixed(2),r:v+' px',steps:v,ifp:(v/100).toFixed(2)};
+  const Dval=parseFloat(v)/100;
+  const Dfmt=Dval<0.01?Dval.toFixed(3):Dval.toFixed(2);
+  const fmt={D:Dfmt,lam:(v/1000).toFixed(3),k:(v/100).toFixed(2),r:v+' px',steps:v,ifp:(v/100).toFixed(2)};
   document.getElementById('v'+id).textContent=fmt[id];
   if(id==='ifp'){
     const badge=document.getElementById('ifp-status-badge');
@@ -943,12 +1089,78 @@ function sy(id,v){
     else{badge.textContent='OFF';badge.className='tag amber';}
   }
 }
+/* =========================================================
+   PARAMETER HELP (tooltip/pop-up)
+   ========================================================= */
+const PARAM_HELP={
+  D:{
+    title:'D (diffusion coefficient)',
+    meaning:'Higher D speeds drug spreading through the extracellular matrix (smaller molecules penetrate faster than large antibodies).',
+    refLabel:'Jain RK (1987)',
+    refUrl:'https://pubmed.ncbi.nlm.nih.gov/3555767/',
+  },
+  lam:{
+    title:'λ (degradation rate)',
+    meaning:'Higher λ reduces effective drug lifetime in tissue via metabolic clearance and loss processes.',
+    refLabel:'Chauhan VP et al. (2011)',
+    refUrl:'https://doi.org/10.1146/annurev-chembioeng-061010-114300',
+  },
+  k:{
+    title:'k (cellular uptake rate)',
+    meaning:'Higher k increases receptor/transporter-mediated uptake and retention (e.g., HER2-driven trends for trastuzumab).',
+    refLabel:'Thurber GM et al. (2008)',
+    refUrl:'https://doi.org/10.1016/j.addr.2008.04.012',
+  },
+  r:{
+    title:'Tumor radius (r)',
+    meaning:'Larger tumors increase diffusion distance and reduce normalized penetration depth toward the core.',
+    refLabel:'Tannock IF et al. (2002)',
+    refUrl:'https://pubmed.ncbi.nlm.nih.gov/11895922/',
+  },
+  ifp:{
+    title:'IFP magnitude (v₀)',
+    meaning:'Higher IFP strengthens outward convection that opposes inward diffusion, acting as a transport barrier.',
+    refLabel:'Stylianopoulos T et al. (2012)',
+    refUrl:'https://doi.org/10.1073/pnas.1205154109',
+  },
+  steps:{
+    title:'Steps (n)',
+    meaning:'More steps improves numerical resolution of the explicit finite-difference solver, yielding smoother penetration curves.',
+    refLabel:'Nugent LJ & Jain RK (1984)',
+    refUrl:'https://pubmed.ncbi.nlm.nih.gov/6197161/',
+  },
+};
+
+function openSliderHelp(key, anchorEl){
+  const help=PARAM_HELP[key];if(!help) return;
+  const overlay=document.getElementById('help-overlay');
+  const pop=document.getElementById('help-pop');
+  const rect=anchorEl?.getBoundingClientRect?.();
+  overlay.style.display='block';
+  pop.style.display='block';
+  pop.setAttribute('aria-hidden','false');
+  pop.innerHTML=`<div class="help-title">${help.title}</div><div class="help-body">${help.meaning} <a href="${help.refUrl}" target="_blank" rel="noopener noreferrer">See ${help.refLabel} ↗</a></div>`;
+  const W=pop.offsetWidth||320,H=pop.offsetHeight||120;
+  const left=rect?Math.max(12,Math.min(window.innerWidth-W-12, rect.left+rect.width/2-W/2)):Math.max(12,window.innerWidth/2-W/2);
+  const top=rect?Math.min(window.innerHeight-H-12, rect.bottom+10):Math.max(12,window.innerHeight/2-H/2);
+  pop.style.left=left+'px';pop.style.top=top+'px';
+}
+function closeSliderHelp(){
+  const overlay=document.getElementById('help-overlay');
+  const pop=document.getElementById('help-pop');
+  overlay.style.display='none';
+  pop.style.display='none';
+  pop.setAttribute('aria-hidden','true');
+}
+document.addEventListener('keydown',(e)=>{if(e.key==='Escape') closeSliderHelp();});
+
 function setSliders(p){
-  document.getElementById('sl-D').value=Math.round(p.D*100);
+  const dRaw=Math.round(p.D*100*2)/2; // slider uses steps of 0.5 in "D*100" space
+  document.getElementById('sl-D').value=dRaw;
   document.getElementById('sl-lam').value=Math.round(p.lam*1000);
   document.getElementById('sl-k').value=Math.round(p.k*100);
   document.getElementById('sl-r').value=p.r;
-  sy('D',Math.round(p.D*100));sy('lam',Math.round(p.lam*1000));sy('k',Math.round(p.k*100));sy('r',p.r);
+  sy('D',dRaw);sy('lam',Math.round(p.lam*1000));sy('k',Math.round(p.k*100));sy('r',p.r);
 }
 function loadPreset(){
   const drug=document.getElementById('drug-select').value,tumor=document.getElementById('tumor-select').value;
@@ -1115,7 +1327,7 @@ async function runSim(){
   document.getElementById('m-cov').textContent=metrics.coverage;
   document.getElementById('status').textContent='Complete ✓ — animation ready';
   document.getElementById('heat-lbl').textContent=`done — ${p.steps} steps${useIFP?' [IFP]':''}`;
-  simResult={C:Array.from(C),curve:Array.from(curve),metrics,p};
+  simResult={C:Array.from(C),curve:Array.from(curve),metrics,p,Df:Array.from(Df),rho:Array.from(rho),vx:Array.from(vx),vy:Array.from(vy)};
   animParams={cx,cy,r:p.r,totalSteps:p.steps};
   const scrub=document.getElementById('anim-scrub');scrub.max=animFrames.length-1;scrub.value=0;
   animIdx=0;document.getElementById('anim-panel').style.display='';renderAnimFrame(0);
@@ -1424,6 +1636,31 @@ ${VALIDATION_DATASETS.map(ds=>{const r=valResults[ds.id]||{rmse:'—',grade:'—
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='PDEOncology_validation_report.html';a.click();
 }
 
+function exportValidationCSV(){
+  const esc=v=>{
+    const s=String(v??'');
+    if(s.includes('"')||s.includes(',')||s.includes('\n')) return `"${s.replace(/"/g,'""')}"`;
+    return s;
+  };
+  const rows=[
+    ['dataset_id','dataset_name','drug','source_citation','journal','D','lambda','k','tumor_radius_r','steps','mode','rmse','maxErr','grade'],
+    ...VALIDATION_DATASETS.map(ds=>{
+      const r=valResults[ds.id]||{};
+      return[
+        ds.id,ds.name,ds.drug,ds.cite,ds.journal,
+        ds.params.D,ds.params.lam,ds.params.k,ds.params.r,
+        ds.params.steps,ds.params.mode,
+        r.rmse??'',r.maxErr??'',r.grade??'',
+      ];
+    })
+  ];
+  const csv=rows.map(row=>row.map(esc).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='PDEOncology_validation.csv';
+  a.click();
+}
+
 /* =========================================================
    PARAMETER SWEEP
    ========================================================= */
@@ -1567,45 +1804,162 @@ function exportSweepPNG(){
 /* =========================================================
    HISTOLOGY IMAGE UPLOAD
    ========================================================= */
+function onRhoSourceChange(){
+  const src=document.getElementById('rho-source')?.value||'histo';
+  const histoUpload=document.getElementById('upload-zone');
+  const mriUploader=document.getElementById('mri-uploader');
+  const mriContrastRow=document.getElementById('mri-contrast-row');
+  const mriNote=document.getElementById('mri-note');
+  const threshLabel=document.getElementById('thresh-label');
+
+  const histoCanvasBox=document.getElementById('histo-canvas-box');
+  const t1CanvasBox=document.getElementById('t1-canvas-box');
+  const t2CanvasBox=document.getElementById('t2-canvas-box');
+
+  if(histoUpload) histoUpload.style.display=src==='histo'?'':'none';
+  if(mriUploader) mriUploader.style.display=src==='mri'?'':'none';
+
+  if(histoCanvasBox) histoCanvasBox.style.display=src==='histo'?'':'none';
+  if(t1CanvasBox) t1CanvasBox.style.display=src==='mri'?'':'none';
+  if(t2CanvasBox) t2CanvasBox.style.display=src==='mri'?'':'none';
+
+  if(mriContrastRow) mriContrastRow.style.display=src==='mri'?'':'none';
+  if(mriNote) mriNote.style.display=src==='mri'?'':'none';
+
+  if(threshLabel) threshLabel.textContent=src==='mri'?'Oedema threshold (T2/FLAIR)':'Threshold (histo / T2 mask)';
+
+  document.getElementById('apply-histo-btn').disabled=true;
+  customRhoField=null;
+  document.getElementById('histo-status').textContent='';
+  updateRhoPreview();
+}
+
 function initUploadZone(){
-  const zone=document.getElementById('upload-zone');if(!zone)return;
-  zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('dragover');});
-  zone.addEventListener('dragleave',()=>zone.classList.remove('dragover'));
-  zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('dragover');const file=e.dataTransfer.files[0];if(file) processHistoFile(file);});
+  const zones=[
+    {id:'upload-zone',handler:processHistoFile},
+    {id:'upload-zone-t1',handler:processT1File},
+    {id:'upload-zone-t2',handler:processT2File},
+  ];
+  zones.forEach(z=>{
+    const zone=document.getElementById(z.id);if(!zone)return;
+    zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('dragover');});
+    zone.addEventListener('dragleave',()=>zone.classList.remove('dragover'));
+    zone.addEventListener('drop',e=>{
+      e.preventDefault();zone.classList.remove('dragover');
+      const file=e.dataTransfer.files[0];if(file) z.handler(file);
+    });
+  });
 }
 function loadHistoImage(e){const file=e.target.files[0];if(file)processHistoFile(file);}
+function loadT1Image(e){const file=e.target.files[0];if(file)processT1File(file);}
+function loadT2Image(e){const file=e.target.files[0];if(file)processT2File(file);}
+
 function processHistoFile(file){
   const reader=new FileReader();
   reader.onload=ev=>{
     const img=new Image();img.onload=()=>{
       histoImageData=img;
       renderHistoCanvas();
-      document.getElementById('apply-histo-btn').disabled=false;
       document.getElementById('histo-status').textContent=`Loaded: ${file.name} (${img.width}×${img.height}px)`;
+      updateRhoPreview();
     };img.src=ev.target.result;
   };reader.readAsDataURL(file);
 }
+function processT1File(file){
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const img=new Image();img.onload=()=>{
+      mriT1ImageData=img;
+      renderT1Canvas();
+      document.getElementById('histo-status').textContent=`Loaded MRI T1-post: ${file.name} (${img.width}×${img.height}px)`;
+      updateRhoPreview();
+    };img.src=ev.target.result;
+  };reader.readAsDataURL(file);
+}
+function processT2File(file){
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const img=new Image();img.onload=()=>{
+      mriT2ImageData=img;
+      renderT2Canvas();
+      document.getElementById('histo-status').textContent=`Loaded MRI T2/FLAIR mask: ${file.name} (${img.width}×${img.height}px)`;
+      updateRhoPreview();
+    };img.src=ev.target.result;
+  };reader.readAsDataURL(file);
+}
+
 function renderHistoCanvas(){
   if(!histoImageData)return;
   const canvas=document.getElementById('histo-canvas');const ctx=canvas.getContext('2d');
   canvas.width=300;canvas.height=300;ctx.drawImage(histoImageData,0,0,300,300);
-  updateThreshold(parseInt(document.getElementById('sl-thresh').value));
 }
+function renderT1Canvas(){
+  if(!mriT1ImageData)return;
+  const canvas=document.getElementById('t1-canvas');const ctx=canvas.getContext('2d');
+  canvas.width=300;canvas.height=300;ctx.drawImage(mriT1ImageData,0,0,300,300);
+}
+function renderT2Canvas(){
+  if(!mriT2ImageData)return;
+  const canvas=document.getElementById('t2-canvas');const ctx=canvas.getContext('2d');
+  canvas.width=300;canvas.height=300;ctx.drawImage(mriT2ImageData,0,0,300,300);
+}
+
 function updateThreshold(val){
   document.getElementById('vthresh').textContent=val;
-  if(!histoImageData)return;
-  const src=document.createElement('canvas');src.width=N;src.height=N;
-  const sctx=src.getContext('2d');sctx.drawImage(histoImageData,0,0,N,N);
-  const imgd=sctx.getImageData(0,0,N,N);
-  const rho=new Float32Array(N*N);
+  updateRhoPreview();
+}
+
+function updateRhoPreview(){
+  const src=document.getElementById('rho-source')?.value||'histo';
   const blur=parseInt(document.getElementById('sl-blur').value)||0;
-  for(let i=0;i<N*N;i++){
-    const r=imgd.data[i*4],g=imgd.data[i*4+1],b=imgd.data[i*4+2];
-    const gray=(r*.299+g*.587+b*.114);
-    // High intensity (bright = stroma) → low rho; dark = cells → high rho
-    rho[i]=gray<val?Math.min(1,(val-gray)/val):Math.max(.05,(gray-val)/(255-val)*.3);
+
+  // Clear apply + rho if inputs are missing
+  if(src==='histo'&&!histoImageData){
+    customRhoField=null;document.getElementById('apply-histo-btn').disabled=true;return;
   }
-  // Simple box blur
+  if(src==='mri'&&(!mriT1ImageData||!mriT2ImageData)){
+    customRhoField=null;document.getElementById('apply-histo-btn').disabled=true;return;
+  }
+
+  const rho=new Float32Array(N*N);
+  if(src==='histo'){
+    const val=parseInt(document.getElementById('sl-thresh').value);
+    const srcCanvas=document.createElement('canvas');srcCanvas.width=N;srcCanvas.height=N;
+    const sctx=srcCanvas.getContext('2d');sctx.drawImage(histoImageData,0,0,N,N);
+    const imgd=sctx.getImageData(0,0,N,N);
+    for(let i=0;i<N*N;i++){
+      const r=imgd.data[i*4],g=imgd.data[i*4+1],b=imgd.data[i*4+2];
+      const gray=(r*.299+g*.587+b*.114);
+      // High intensity (bright = stroma) → low rho; dark = cells → high rho
+      rho[i]=gray<val?Math.min(1,(val-gray)/val):Math.max(.05,(gray-val)/(255-val)*.3);
+    }
+  } else {
+    const t1Thr=parseInt(document.getElementById('sl-mri-contrast')?.value||128);
+    const t2Thr=parseInt(document.getElementById('sl-thresh').value);
+    const denom1=Math.max(1,255-t1Thr);
+    const denom2=Math.max(1,255-t2Thr);
+
+    const t1Canvas=document.createElement('canvas');t1Canvas.width=N;t1Canvas.height=N;
+    const t2Canvas=document.createElement('canvas');t2Canvas.width=N;t2Canvas.height=N;
+    const t1ctx=t1Canvas.getContext('2d');t1ctx.drawImage(mriT1ImageData,0,0,N,N);
+    const t2ctx=t2Canvas.getContext('2d');t2ctx.drawImage(mriT2ImageData,0,0,N,N);
+    const img1=t1ctx.getImageData(0,0,N,N).data;
+    const img2=t2ctx.getImageData(0,0,N,N).data;
+
+    for(let i=0;i<N*N;i++){
+      const r1=img1[i*4],g1=img1[i*4+1],b1=img1[i*4+2];
+      const r2=img2[i*4],g2=img2[i*4+1],b2=img2[i*4+2];
+      const gray1=(r1*.299+g1*.587+b1*.114);
+      const gray2=(r2*.299+g2*.587+b2*.114);
+
+      // Enh: contrast-enhancing T1-post region; Edema: bright T2/FLAIR mask region.
+      const enh=gray1<=t1Thr?0:Math.min(1,(gray1-t1Thr)/denom1);
+      const edema=gray2<=t2Thr?0:Math.min(1,(gray2-t2Thr)/denom2);
+      rho[i]=Math.max(.05,0.05 + 0.95*edema*(0.4+0.6*enh));
+    }
+  }
+
+  // Simple box blur (same blur pipeline as existing histology thresholding)
   if(blur>0){
     const blurred=new Float32Array(N*N);
     for(let y=0;y<N;y++) for(let x=0;x<N;x++){
@@ -1617,7 +1971,8 @@ function updateThreshold(val){
     }
     rho.set(blurred);
   }
-  // Preview
+
+  // Preview rho field
   const prev=document.getElementById('rho-preview');prev.width=300;prev.height=300;
   const pctx=prev.getContext('2d');const pimg=pctx.createImageData(300,300);
   for(let py=0;py<300;py++) for(let px=0;px<300;px++){
@@ -1626,18 +1981,22 @@ function updateThreshold(val){
     pimg.data[i]=r;pimg.data[i+1]=g;pimg.data[i+2]=b;pimg.data[i+3]=255;
   }
   pctx.putImageData(pimg,0,0);
+
   customRhoField=rho;
+  document.getElementById('apply-histo-btn').disabled=false;
 }
+
 function applyHistoRho(){
   if(!customRhoField){document.getElementById('histo-status').textContent='No image loaded.';return;}
   document.getElementById('histo-status').textContent='✓ Custom ρ field applied — run simulation to use.';
   switchTab('simulation');
 }
 function clearHistoImage(){
-  histoImageData=null;customRhoField=null;
+  histoImageData=null; mriT1ImageData=null; mriT2ImageData=null; customRhoField=null;
   document.getElementById('apply-histo-btn').disabled=true;
   document.getElementById('histo-status').textContent='';
-  ['histo-canvas','rho-preview'].forEach(id=>{const c=document.getElementById(id);if(c){const ctx=c.getContext('2d');ctx.fillStyle='#030507';ctx.fillRect(0,0,c.width,c.height);}});
+  ['histo-canvas','t1-canvas','t2-canvas','rho-preview'].forEach(id=>{
+    const c=document.getElementById(id);if(c){const ctx=c.getContext('2d');ctx.fillStyle='#030507';ctx.fillRect(0,0,c.width,c.height);}});
 }
 
 /* =========================================================
@@ -1925,6 +2284,28 @@ function exportCSV(){
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
   a.download=`PDEOncology_${p.drug}_${p.tumor}.csv`;a.click();
 }
+function exportPhysiCell(){
+  if(!simResult){alert('Run a simulation first.');return;}
+  const{p,Df,rho,vx,vy}=simResult;
+  const dx=1/N;
+  const data={
+    software:'PDEOncology',
+    version:'0.5',
+    grid:{N,dx},
+    indexing:'row-major (y*N + x)',
+    fields:{
+      D:Array.from(Df),
+      rho:Array.from(rho),
+      convection:{vx:Array.from(vx),vy:Array.from(vy),enabled:(p.ifp||0)>0},
+    },
+    params:{D:p.D,lam:p.lam,k:p.k,tumorRadiusPx:p.r,ifp:p.ifp||0,steps:p.steps,mode:p.mode,drug:p.drug,tumor:p.tumor},
+    notes:'2D exports intended for research workflows. PhysiCell schemas may require further mapping.'
+  };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`PDEOncology_PhysiCell_export_${p.drug}_${p.tumor}.json`;
+  a.click();
+}
 function exportPNG(){const a=document.createElement('a');a.href=document.getElementById('result-heatmap').toDataURL('image/png');a.download='PDEOncology_heatmap.png';a.click();}
 function printReport(){window.print();}
 
@@ -1985,14 +2366,20 @@ function applyAIParams(){
 /* =========================================================
    COMPARE MODE
    ========================================================= */
-function syCmp(ab,id,v){const fmt={D:(v/100).toFixed(2),lam:(v/1000).toFixed(3),k:(v/100).toFixed(2)};document.getElementById('cmp'+ab+'-v'+id).textContent=fmt[id];}
+function syCmp(ab,id,v){
+  const Dval=parseFloat(v)/100;
+  const Dfmt=Dval<0.01?Dval.toFixed(3):Dval.toFixed(2);
+  const fmt={D:Dfmt,lam:(v/1000).toFixed(3),k:(v/100).toFixed(2)};
+  document.getElementById('cmp'+ab+'-v'+id).textContent=fmt[id];
+}
 function loadCmpPreset(ab){
   const drug=document.getElementById('cmp'+ab+'-drug').value,tumor=document.getElementById('cmp-tumor').value;
   if(drug==='custom')return;
   const p=PRESETS[drug+'_'+tumor]||DB.find(d=>d.drug.toLowerCase().replace(/[\s-]/g,'_')===drug)||DB[0];
   if(!p)return;
-  document.getElementById('cmp'+ab+'-D').value=Math.round(p.D*100);document.getElementById('cmp'+ab+'-lam').value=Math.round(p.lam*1000);document.getElementById('cmp'+ab+'-k').value=Math.round(p.k*100);
-  syCmp(ab,'D',Math.round(p.D*100));syCmp(ab,'lam',Math.round(p.lam*1000));syCmp(ab,'k',Math.round(p.k*100));
+  const dRaw=Math.round(p.D*100*2)/2;
+  document.getElementById('cmp'+ab+'-D').value=dRaw;document.getElementById('cmp'+ab+'-lam').value=Math.round(p.lam*1000);document.getElementById('cmp'+ab+'-k').value=Math.round(p.k*100);
+  syCmp(ab,'D',dRaw);syCmp(ab,'lam',Math.round(p.lam*1000));syCmp(ab,'k',Math.round(p.k*100));
 }
 function getCmpParams(ab){
   const tumor=document.getElementById('cmp-tumor').value,mode=document.getElementById('cmp-mode').value,steps=parseInt(document.getElementById('cmp-steps').value);
