@@ -2,7 +2,7 @@
 
 [![Live Demo](https://img.shields.io/badge/demo-pdeoncology.com-4d9eff?style=flat-square)](https://pdeoncology.com)
 [![Version](https://img.shields.io/badge/version-v0.5-3de383?style=flat-square)](https://pdeoncology.com)
-[![License](https://img.shields.io/badge/license-AGPL-3.0 license-f0a54a?style=flat-square)](LICENSE)
+[![License](https://img.shields.io/badge/license-AGPL--3.0-f0a54a?style=flat-square)
 [![PDEOutreach](https://img.shields.io/badge/outreach-PDEOutreach-a78bfa?style=flat-square)](https://sym19.github.io/pdeoutreach)
 
 PDEOncology is an open-source research platform that simulates tumour drug penetration using reaction-diffusion-convection PDEs. It enables computational oncologists, bioengineers and pharmacologists to test physical barriers (IFP, stroma, vascularisation) in seconds — no installation required.
