@@ -1,14 +1,14 @@
 # PDEOncology — Tumor Drug Penetration Simulator
 
 [![Live Demo](https://img.shields.io/badge/demo-pdeoncology.com-4d9eff?style=flat-square)](https://pdeoncology.com)
-[![Version](https://img.shields.io/badge/version-v0.4-3de383?style=flat-square)](https://pdeoncology.com)
-[![License](https://img.shields.io/badge/license-MIT-f0a54a?style=flat-square)](LICENSE)
-[![PDEOutreach](https://img.shields.io/badge/outreach-PDEOutreach-a78bfa?style=flat-square)](https://sym19.github.io/pdeoutreach)
+[![Version](https://img.shields.io/badge/version-v0.5-3de383?style=flat-square)](https://pdeoncology.com)
+[![License](https://img.shields.io/badge/license-AGPL--3.0-f0a54a?style=flat-square)](LICENSE)
+[![PDEOutreach](https://img.shields.io/badge/outreach-PDEOutreach-a78bfa?style=flat-square)](https://pdeoutreach.com)
 
 A browser-based platform for simulating tumor drug penetration using **reaction-diffusion partial differential equations (PDEs)**. All computation runs client-side in JavaScript — no server, no installation required. Available in English and Chinese (中英双语).
 
 🔗 **Live site:** [pdeoncology.com](https://pdeoncology.com)  
-🌐 **Public outreach:** [PDEOutreach](https://sym19.github.io/pdeoutreach) — cancer science for everyone
+🌐 **Public outreach:** [PDEOutreach](https://pdeoutreach.com) — cancer science for everyone
 
 ---
 
@@ -83,7 +83,7 @@ tumor-drug-penetration-model/
 ├── index.html          # Entire application (HTML + CSS + JS, bilingual)
 ├── CNAME               # Custom domain config
 ├── README.md           # This file
-├── LICENSE             # MIT License
+├── LICENSE             # GNU AGPL v3
 ├── requirements.txt    # Python dependencies (Colab notebook)
 └── Tumor_Drug_Simulation_Core.ipynb   # Original Colab prototype
 ```
@@ -172,11 +172,11 @@ PDEOncology is an educational and exploratory tool. Key simplifications:
 
 | Version | Date | Highlights |
 |---------|------|-----------|
-| **v0.4** | Mar 2026 | 20-frame animation, Compare tab, bilingual CN/EN, favicon, full About tab |
+| **v0.5** | Mar 2026 | IFP convection, experimental validation, parameter sweep, Python export |
+| v0.4 | Mar 2026 | 20-frame animation, Compare tab, bilingual CN/EN, favicon, full About tab |
 | v0.3 | Mar 2026 | UI overhaul — Space Mono/Inter, dark academic theme, mobile responsive |
 | v0.2 | Mar 2026 | Cloudflare Worker, Claude API, AI fallback, drug DB (21 entries), export |
 | v0.1 | Mar 2026 | Initial — PDE solver, heatmap, radial curve, 3 delivery modes |
-| v0.5 *(upcoming)* | — | DB expansion (50+ entries), Claude-generated report, parameter sweep |
 
 ---
 
@@ -188,6 +188,7 @@ PDEOncology is an educational and exploratory tool. Key simplifications:
 4. Chauhan VP et al. Delivery of molecular and nanoscale medicine to tumors. *Annual Review of Chemical and Biomolecular Engineering*, 2:281–298, 2011.
 5. Tannock IF et al. Limited penetration of anticancer drugs through tumor tissue. *Clinical Cancer Research*, 8(3):878–884, 2002.
 6. Minchinton AI, Tannock IF. Drug penetration in solid tumours. *Nature Reviews Cancer*, 6(8):583–592, 2006.
+7. Stylianopoulos T et al. Causes, consequences, and remedies for growth-induced solid stress in murine and human tumors. *PNAS*, 109(38):15101–15108, 2012.
 
 ---
 
@@ -209,10 +210,20 @@ Leads research and content development — curating the drug parameter database 
 
 ## Related
 
-- **[PDEOutreach](https://sym19.github.io/pdeoutreach)** — the public-facing companion platform. Cancer science explained for everyone, with interactive quizzes, risk profiles, and real patient stories.
+- **[PDEOutreach](https://pdeoutreach.com)** — the public-facing companion platform. Cancer science explained for everyone, with interactive quizzes, risk profiles, and real patient stories.
 
 ---
 
 ## License
 
-MIT License — free to use, modify, and build upon. Please cite if used in academic work.
+This project is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)**.
+
+You are free to use, modify, and distribute this software under the following conditions:
+
+- **Copyleft:** Any modified version must also be released under AGPL-3.0.
+- **Network use:** If you run a modified version of this software as a web service (e.g. on a public server), you must make the complete corresponding source code available to users of that service.
+- **Attribution:** Original authorship must be preserved in all copies and derivatives.
+
+See the [LICENSE](LICENSE) file for the full license text, or visit [gnu.org/licenses/agpl-3.0](https://www.gnu.org/licenses/agpl-3.0.html).
+
+> AGPL-3.0 was chosen to ensure that this educational tool and its derivatives remain freely available as open-source software, including when deployed as a hosted web application.
