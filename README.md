@@ -194,17 +194,13 @@ PDEOncology is an educational and exploratory tool. Key simplifications:
 
 ## Team
 
-**Yumeng S.** — Technical Development, Website Engineering, UI Design, PDE Implementation  
-*NSFZ · IB*
+**Y. Shi** — Technical Development, Website Engineering, UI Design, PDE Implementation  
 
-Designed and built the full PDEOncology platform — including the finite difference PDE solver, interactive visualisation engine, Claude API integration, bilingual language system, and the complete frontend interface.
+Designed and built the full PDEOncology platform — including the finite difference PDE solver, interactive visualisation engine, Claude API integration, and the complete frontend interface.
 
-**Tracey Y.** — Literature Research, Drug Database, Science Communication, Outreach & Promotion  
-*Wycombe Abbey · UK*
+**T.Yang** — Literature Research, Drug Database, Biophysical Modelling, System Co-development
 
-Leads research and content development — curating the drug parameter database from published literature, sourcing biophysical references, and driving outreach across PDEOutreach and social media channels.
-
-> 祝我们都能去自己想上的学校！@MIT @Cambridge
+Leads research and content development — curating the drug parameter database from published literature, sourcing biophysical references, optimization of reaction-diffusion-convection algorithms, and the synthesis of multi-source experimental data. 
 
 ---
 
