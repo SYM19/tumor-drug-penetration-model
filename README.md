@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/license-AGPL--3.0-f0a54a?style=flat-square)](LICENSE)
 [![PDEOutreach](https://img.shields.io/badge/outreach-PDEOutreach-a78bfa?style=flat-square)](https://pdeoutreach.com)
 
-A browser-based platform for simulating tumor drug penetration using **reaction-diffusion partial differential equations (PDEs)**. All computation runs client-side in JavaScript — no server, no installation required. Available in English and Chinese (中英双语).
+A browser-based platform for simulating tumor drug penetration using **reaction-diffusion partial differential equations (PDEs)**. All computation runs client-side in JavaScript — no server, no installation required.
 
 🔗 **Live site:** [pdeoncology.com](https://pdeoncology.com)  
 🌐 **Public outreach:** [PDEOutreach](https://pdeoutreach.com) — cancer science for everyone
@@ -54,7 +54,6 @@ Drug concentration C(x,y,t) evolves according to the **reaction-diffusion equati
 | **Compare Mode** | Two drugs on same tumor — side-by-side heatmaps, overlay curves, auto summary |
 | **Drug Database** | 21 drug × tumor combinations, searchable and filterable |
 | **Results & Export** | Auto-generated report, CSV export, PNG export, print |
-| **Bilingual** | Full Chinese/English language toggle (中英双语) |
 | **3 Delivery modes** | IV infusion / vascular ring / intratumoral injection |
 
 ---
