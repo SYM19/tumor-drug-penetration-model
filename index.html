@@ -1642,8 +1642,8 @@ async function runSim(){
       const stepNum = (i + 1) * stepsPerFrame;
       const pkMode = getPKMode();
       const boundaryC = pkBoundaryC(stepNum - stepsPerFrame, p.steps, pkMode);
-      if (useIFP) pdeChunkIFP(..., boundaryC);
-      else pdeChunk(..., boundaryC);
+      if (useIFP) pdeChunkIFP(C, Df, rho, vx, vy, dx, dt, p.lam, p.k, p.phi, stepsPerFrame, p.mode, boundaryC);
+else pdeChunk(C, Df, rho, dx, dt, p.lam, p.k, p.phi, stepsPerFrame, p.mode, boundaryC);
       animFrames.push({C: new Float32Array(C), step: stepNum});
       document.getElementById('prog').style.width = ((i + 1) / TOTAL_FRAMES * 100).toFixed(0) + '%';
       document.getElementById('heat-lbl').textContent = `step ${stepNum} / ${p.steps}${useIFP ? ' [IFP]' : ''}`;
