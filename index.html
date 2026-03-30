@@ -283,6 +283,8 @@ var _hmt = _hmt || [];
       .ifp-highlight{padding:.75rem;}
       .ifp-highlight .slider-name{color:var(--amber);}
 
+      
+
       /* ── Canvas ── */
       .canvas-box{width:100%;}
       canvas{max-height:300px;object-fit:contain;}
@@ -581,6 +583,9 @@ var _hmt = _hmt || [];
             <div><label>Drug</label>
               <select id="drug-select" onchange="loadPreset()">
                 <option value="doxorubicin">Doxorubicin</option><option value="paclitaxel">Paclitaxel</option>
+                <option value="nab_paclitaxel">nab-Paclitaxel (Abraxane)</option>
+                <option value="liposomal_paclitaxel">Liposomal Paclitaxel</option>
+                <option value="micellar_paclitaxel">Micellar Paclitaxel</option>
                 <option value="cisplatin">Cisplatin</option><option value="gemcitabine">Gemcitabine</option>
                 <option value="trastuzumab">Trastuzumab (ADC)</option><option value="custom">Custom (AI)</option>
               </select>
@@ -627,6 +632,37 @@ var _hmt = _hmt || [];
             </div>
             <div class="slider-hint" style="margin-top:-4px;margin-bottom:10px;">IFP magnitude: 0.00–0.15 (dimensionless; scaled from typical tumour IFP 5–30 mmHg via Darcy’s law). Outward flow opposes inward drug diffusion.</div>
             <p style="margin:0;font-size:.72rem;color:var(--text3);">IFP = 0 → standard diffusion. IFP > 0 → outward radial flow opposing drug.</p>
+          </div>
+
+          <!-- ── RECEPTOR EXPRESSION φ ── -->
+          <div style="background:rgba(77,158,255,.04);border:1px solid rgba(77,158,255,.15);border-radius:var(--radius);padding:.875rem 1rem;margin-top:.875rem;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+              <label style="margin:0;font-size:.8rem;color:var(--blue);font-weight:600;text-transform:none;">φ Receptor Expression Level</label>
+              <span class="tag blue" id="receptor-badge">k_eff = k × 1.0×</span>
+            </div>
+            <div class="slider-row">
+              <span class="slider-name">Expression φ</span>
+              <input type="range" id="sl-receptor" min="1" max="30" step="1" value="10" oninput="syReceptor(this.value)">
+              <span class="slider-val" id="vreceptor">1.0×</span>
+            </div>
+            <div class="slider-hint">k_eff = k_base × φ. 1× = baseline. Overexpression (HER2+) → 2–3×. Low → 0.1–0.5×. Key for trastuzumab, ADCs, targeted nanoparticles.</div>
+          </div>
+          
+          <!-- ── PARTICLE SIZE → D_eff ── -->
+          <div style="background:rgba(167,139,250,.04);border:1px solid rgba(167,139,250,.15);border-radius:var(--radius);padding:.875rem 1rem;margin-top:.875rem;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+              <label style="margin:0;color:#a78bfa;font-size:.8rem;font-weight:600;text-transform:none;">◎ Particle Size → D_eff</label>
+              <span class="tag" style="border-color:rgba(167,139,250,.4);color:#a78bfa;background:rgba(167,139,250,.08);">Stokes–Einstein</span>
+            </div>
+            <div class="slider-row">
+              <span class="slider-name" style="color:#a78bfa;">Radius (nm)</span>
+              <input type="range" id="sl-particle" min="0.3" max="150" step="0.5" value="0.5" oninput="onParticleSizeChange(this.value)" style="accent-color:#a78bfa;">
+              <span class="slider-val" id="vparticle" style="color:#a78bfa;">0.5</span>
+            </div>
+            <div style="font-family:var(--mono);font-size:.72rem;color:var(--text3);margin-top:-4px;margin-bottom:8px;">
+              D_eff (Stokes–Einstein): <span id="se-d-val" style="color:#a78bfa;font-weight:700;">0.0800</span> — auto-syncs D slider
+            </div>
+            <div class="slider-hint" style="margin:0;">D = k_BT/(6πηr), T=310K, η=0.7 mPa·s. Upper-bound estimate — tissue D is 5–20× lower for NPs.</div>
           </div>
 
           <div class="btn-row">
@@ -797,14 +833,14 @@ var _hmt = _hmt || [];
       <div class="grid-2 section">
         <div class="card" style="border-top:2px solid var(--blue);">
           <div class="card-header"><div class="card-icon blue">A</div><h2 style="margin:0;color:var(--blue);">Drug A</h2></div>
-          <div style="margin-bottom:.875rem;"><label>Drug preset</label><select id="cmpA-drug" onchange="loadCmpPreset('A')"><option value="doxorubicin">Doxorubicin</option><option value="paclitaxel">Paclitaxel</option><option value="cisplatin">Cisplatin</option><option value="gemcitabine">Gemcitabine</option><option value="trastuzumab">Trastuzumab</option><option value="custom">Custom</option></select></div>
+          <div style="margin-bottom:.875rem;"><label>Drug preset</label><select id="cmpA-drug" onchange="loadCmpPreset('A')"><option value="doxorubicin">Doxorubicin</option><option value="paclitaxel">Paclitaxel</option><option value="nab_paclitaxel">nab-Paclitaxel (Abraxane)</option><option value="liposomal_paclitaxel">Liposomal Paclitaxel</option><option value="micellar_paclitaxel">Micellar Paclitaxel</option><option value="cisplatin">Cisplatin</option><option value="gemcitabine">Gemcitabine</option><option value="trastuzumab">Trastuzumab</option><option value="custom">Custom</option></select></div>
           <div class="slider-row"><span class="slider-name">D · diffusion</span><input type="range" id="cmpA-D" min="0.5" max="25" step="0.5" value="8" oninput="syCmp('A','D',this.value)"><span class="slider-val" id="cmpA-vD">0.08</span></div>
           <div class="slider-row"><span class="slider-name">λ · decay</span><input type="range" id="cmpA-lam" min="1" max="50" step="1" value="5" oninput="syCmp('A','lam',this.value)"><span class="slider-val" id="cmpA-vlam">0.005</span></div>
           <div class="slider-row"><span class="slider-name">k · uptake</span><input type="range" id="cmpA-k" min="1" max="15" step="1" value="6" oninput="syCmp('A','k',this.value)"><span class="slider-val" id="cmpA-vk">0.06</span></div>
         </div>
         <div class="card" style="border-top:2px solid var(--green);">
           <div class="card-header"><div class="card-icon green">B</div><h2 style="margin:0;color:var(--green);">Drug B</h2></div>
-          <div style="margin-bottom:.875rem;"><label>Drug preset</label><select id="cmpB-drug" onchange="loadCmpPreset('B')"><option value="doxorubicin">Doxorubicin</option><option value="paclitaxel" selected>Paclitaxel</option><option value="cisplatin">Cisplatin</option><option value="gemcitabine">Gemcitabine</option><option value="trastuzumab">Trastuzumab</option><option value="custom">Custom</option></select></div>
+          <div style="margin-bottom:.875rem;"><label>Drug preset</label><select id="cmpB-drug" onchange="loadCmpPreset('B')"><option value="doxorubicin">Doxorubicin</option><option value="paclitaxel" selected>Paclitaxel</option><option value="nab_paclitaxel">nab-Paclitaxel (Abraxane)</option><option value="liposomal_paclitaxel">Liposomal Paclitaxel</option><option value="micellar_paclitaxel">Micellar Paclitaxel</option><option value="cisplatin">Cisplatin</option><option value="gemcitabine">Gemcitabine</option><option value="trastuzumab">Trastuzumab</option><option value="custom">Custom</option></select></div>
           <div class="slider-row"><span class="slider-name">D · diffusion</span><input type="range" id="cmpB-D" min="0.5" max="25" step="0.5" value="6" oninput="syCmp('B','D',this.value)"><span class="slider-val" id="cmpB-vD">0.06</span></div>
           <div class="slider-row"><span class="slider-name">λ · decay</span><input type="range" id="cmpB-lam" min="1" max="50" step="1" value="4" oninput="syCmp('B','lam',this.value)"><span class="slider-val" id="cmpB-vlam">0.004</span></div>
           <div class="slider-row"><span class="slider-name">k · uptake</span><input type="range" id="cmpB-k" min="1" max="15" step="1" value="5" oninput="syCmp('B','k',this.value)"><span class="slider-val" id="cmpB-vk">0.05</span></div>
@@ -868,6 +904,55 @@ var _hmt = _hmt || [];
         <p>Radial penetration curves generated by PDEOncology are compared against approximately digitized experimental data from peer-reviewed spheroid studies. Experimental points extracted from published figures using WebPlotDigitizer methodology (±5–10% digitization error). RMSE computed in normalised concentration units.</p>
         <div class="card" style="border-left:3px solid var(--amber);margin-bottom:1rem;">
           <p style="margin:0;font-size:.8rem;color:var(--text3);"><strong style="color:var(--amber);">Disclaimer:</strong> Experimental data points are approximate digitizations from published figures. Quantitative agreement is therefore semi-quantitative. The comparison validates that model dynamics (penetration shape, depth, and drug-class ordering) are physically consistent with published spheroid measurements. Full quantitative validation would require digitization of raw tabular data directly from authors.</p>
+        </div>
+      </div>
+
+      <!-- ── CUSTOM CSV UPLOAD ── -->
+      <div class="card section" style="border:1px solid rgba(61,227,131,.2);">
+        <div class="card-header">
+          <div class="card-icon green">⬆</div>
+          <h2 style="margin:0;">Custom Dataset — CSV Upload</h2>
+          <span class="tag green" style="margin-left:auto;">Researcher data</span>
+        </div>
+        <p>Upload your own radial penetration data. Two columns: <code>distance, concentration</code> (header optional). Distance and concentration are auto-normalised. Tune D, λ, k in the Simulation tab to match your formulation, then run validation to compute RMSE.</p>
+        <div class="grid-2" style="gap:1rem;align-items:start;">
+          <div>
+            <div class="upload-zone" id="csv-upload-zone" onclick="document.getElementById('csv-file-input').click()">
+              <div style="font-family:var(--mono);font-size:.8rem;color:var(--text3);margin-bottom:.5rem;">Click or drag CSV / TXT</div>
+              <div style="font-size:.75rem;color:var(--text3);">Two columns: distance, concentration</div>
+              <input type="file" id="csv-file-input" accept=".csv,.txt,.tsv" style="display:none;" onchange="handleCSVUpload(event)">
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:.75rem;">
+              <div>
+                <label>Separator</label>
+                <select id="csv-sep">
+                  <option value="auto">Auto-detect</option>
+                  <option value=",">Comma</option>
+                  <option value="&#9;">Tab</option>
+                  <option value=";">Semicolon</option>
+                </select>
+              </div>
+              <div>
+                <label>Distance reference</label>
+                <select id="csv-dist-ref">
+                  <option value="boundary">From tumor boundary (0 = surface)</option>
+                  <option value="center">From tumor center (0 = core)</option>
+                </select>
+              </div>
+            </div>
+            <div style="margin-top:.75rem;font-family:var(--mono);font-size:.72rem;color:var(--text3);" id="csv-info"></div>
+            <div class="btn-row">
+              <button class="btn btn-green" id="csv-apply-btn" onclick="applyCSVDataset()" disabled>✓ Activate as dataset</button>
+              <button class="btn btn-ghost" onclick="clearCSVDataset()">Clear</button>
+            </div>
+            <div class="status-line" id="csv-status"></div>
+          </div>
+          <div>
+            <div class="canvas-box" style="height:220px;">
+              <canvas id="csv-preview-canvas" width="400" height="220"></canvas>
+              <div class="canvas-overlay">CSV preview</div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1137,6 +1222,12 @@ const DB=[
   {drug:'Paclitaxel',tumor:'pancreatic',D:.015,lam:.006,k:.03,r:28,diff:'very high',cls:'Taxane'},
   {drug:'Paclitaxel',tumor:'glioma',D:.08,lam:.003,k:.045,r:20,diff:'medium',cls:'Taxane'},
   {drug:'Paclitaxel',tumor:'melanoma',D:.04,lam:.006,k:.06,r:24,diff:'high',cls:'Taxane'},
+  {drug:'nab-Paclitaxel (Abraxane)',tumor:'breast',D:.0028,lam:.004,k:.05,r:22,diff:'medium',cls:'NP Taxane',particleNm:130,note:'130nm albumin-bound NP; D_eff via Stokes-Einstein (pre-validation estimate)'},
+  {drug:'nab-Paclitaxel (Abraxane)',tumor:'pancreatic',D:.001,lam:.006,k:.03,r:28,diff:'very high',cls:'NP Taxane',particleNm:130,note:'130nm; severe stromal barrier in PDAC'},
+  {drug:'Liposomal Paclitaxel',tumor:'breast',D:.0024,lam:.003,k:.045,r:22,diff:'medium',cls:'NP Taxane',particleNm:150,note:'150nm liposome; slow ECM diffusion'},
+  {drug:'Liposomal Paclitaxel',tumor:'pancreatic',D:.0009,lam:.005,k:.028,r:28,diff:'very high',cls:'NP Taxane',particleNm:150},
+  {drug:'Micellar Paclitaxel',tumor:'breast',D:.018,lam:.004,k:.052,r:22,diff:'medium',cls:'NP Taxane',particleNm:25,note:'20–30nm micelle; better penetration than larger NPs'},
+  {drug:'Micellar Paclitaxel',tumor:'pancreatic',D:.007,lam:.006,k:.032,r:28,diff:'high',cls:'NP Taxane',particleNm:25},
   {drug:'Cisplatin',tumor:'breast',D:.12,lam:.003,k:.08,r:22,diff:'low',cls:'Platinum'},
   {drug:'Cisplatin',tumor:'pancreatic',D:.03,lam:.005,k:.05,r:28,diff:'high',cls:'Platinum'},
   {drug:'Cisplatin',tumor:'glioma',D:.15,lam:.002,k:.07,r:20,diff:'low',cls:'Platinum'},
@@ -1317,22 +1408,38 @@ function setSliders(p){
   document.getElementById('sl-r').value=p.r;
   sy('D',dRaw);sy('lam',Math.round(p.lam*1000));sy('k',Math.round(p.k*100));sy('r',p.r);
 }
-function loadPreset(){
-  const drug=document.getElementById('drug-select').value,tumor=document.getElementById('tumor-select').value;
-  if(drug==='custom')return;
-  const p=PRESETS[drug+'_'+tumor];if(p)setSliders(p);
+  
+function loadPreset() {
+  const drug = document.getElementById('drug-select').value;
+  const tumor = document.getElementById('tumor-select').value;
+  if (drug === 'custom') return;
+  // Find by matching drug value key against DB drug names (lowercased, spaces→_)
+  const p = DB.find(d =>
+    d.drug.toLowerCase().replace(/[\s\-()/]/g,'_').replace(/_+/g,'_') === drug &&
+    d.tumor === tumor
+  ) || DB.find(d => d.drug.toLowerCase().replace(/[\s\-()/]/g,'_').replace(/_+/g,'_') === drug);
+  if (p) {
+    setSliders(p);
+    // Auto-sync particle size slider if entry has particleNm
+    if (p.particleNm) {
+      document.getElementById('sl-particle').value = p.particleNm;
+      onParticleSizeChange(p.particleNm);
+    }
+  }
 }
-function getParams(){
-  return{
-    D:parseFloat(document.getElementById('sl-D').value)/100,
-    lam:parseFloat(document.getElementById('sl-lam').value)/1000,
-    k:parseFloat(document.getElementById('sl-k').value)/100,
-    r:parseInt(document.getElementById('sl-r').value),
-    steps:parseInt(document.getElementById('sl-steps').value),
-    ifp:parseFloat(document.getElementById('sl-ifp').value)/100,
-    mode:document.getElementById('mode-select').value,
-    drug:document.getElementById('drug-select').value,
-    tumor:document.getElementById('tumor-select').value,
+  
+function getParams() {
+  return {
+    D: parseFloat(document.getElementById('sl-D').value) / 100,
+    lam: parseFloat(document.getElementById('sl-lam').value) / 1000,
+    k: parseFloat(document.getElementById('sl-k').value) / 100,
+    r: parseInt(document.getElementById('sl-r').value),
+    steps: parseInt(document.getElementById('sl-steps').value),
+    ifp: parseFloat(document.getElementById('sl-ifp').value) / 100,
+    phi: getReceptorPhi(),   // ← NEW
+    mode: document.getElementById('mode-select').value,
+    drug: document.getElementById('drug-select').value,
+    tumor: document.getElementById('tumor-select').value,
   };
 }
 
@@ -1386,20 +1493,19 @@ function initC(mode,cx,cy,r){
 }
 
 /* Standard PDE chunk (no IFP) */
-function pdeChunk(C,Df,rho,dx,dt,lam,k,steps,mode){
+function pdeChunk(C, Df, rho, dx, dt, lam, k, phi, steps, mode){
   const C2=new Float32Array(N*N);
   for(let s=0;s<steps;s++){
     for(let y=1;y<N-1;y++) for(let x=1;x<N-1;x++){
       const i=y*N+x,lap=(C[(y-1)*N+x]+C[(y+1)*N+x]+C[y*N+(x-1)]+C[y*N+(x+1)]-4*C[i])/(dx*dx);
-      C2[i]=Math.max(0,C[i]+dt*Df[i]*lap-dt*lam*C[i]-dt*k*rho[i]*C[i]);
-    }
+      C2[i] = Math.max(0, C[i] + dt*(Df[i]*lap - convX - convY - lam*C[i] - k*phi*rho[i]*C[i]));
     if(mode==='left_boundary'){for(let y=0;y<N;y++){C2[y*N]=1;C2[y*N+N-1]=0;}for(let x=0;x<N;x++){C2[x]=0;C2[(N-1)*N+x]=0;}}
     C.set(C2);
   }
 }
 
 /* IFP-extended PDE chunk — upwind convection scheme for stability */
-function pdeChunkIFP(C,Df,rho,vx,vy,dx,dt,lam,k,steps,mode){
+function pdeChunkIFP(C, Df, rho, vx, vy, dx, dt, lam, k, phi, steps, mode){
   const C2=new Float32Array(N*N);
   for(let s=0;s<steps;s++){
     for(let y=1;y<N-1;y++) for(let x=1;x<N-1;x++){
@@ -1409,7 +1515,7 @@ function pdeChunkIFP(C,Df,rho,vx,vy,dx,dt,lam,k,steps,mode){
       const vxi=vx[i],vyi=vy[i];
       const convX=vxi>0?vxi*(C[i]-C[y*N+(x-1)])/dx:vxi*(C[y*N+(x+1)]-C[i])/dx;
       const convY=vyi>0?vyi*(C[i]-C[(y-1)*N+x])/dx:vyi*(C[(y+1)*N+x]-C[i])/dx;
-      C2[i]=Math.max(0,C[i]+dt*(Df[i]*lap-convX-convY-lam*C[i]-k*rho[i]*C[i]));
+      C2[i] = Math.max(0, C[i] + dt * Df[i] * lap - dt * lam * C[i] - dt * k * phi * rho[i] * C[i]);
     }
     if(mode==='left_boundary'){for(let y=0;y<N;y++){C2[y*N]=1;C2[y*N+N-1]=0;}for(let x=0;x<N;x++){C2[x]=0;C2[(N-1)*N+x]=0;}}
     C.set(C2);
@@ -1465,8 +1571,8 @@ async function runSim(){
   animFrames.push({C:new Float32Array(C),step:0});
   for(let i=0;i<TOTAL_FRAMES;i++){
     await new Promise(r=>setTimeout(r,0));
-    if(useIFP) pdeChunkIFP(C,Df,rho,vx,vy,dx,dt,p.lam,p.k,stepsPerFrame,p.mode);
-    else pdeChunk(C,Df,rho,dx,dt,p.lam,p.k,stepsPerFrame,p.mode);
+    if(useIFP) pdeChunkIFP(C, Df, rho, vx, vy, dx, dt, p.lam, p.k, p.phi, stepsPerFrame, p.mode);
+    else pdeChunk(C, Df, rho, dx, dt, p.lam, p.k, p.phi, stepsPerFrame, p.mode);
     const stepNum=(i+1)*stepsPerFrame;
     animFrames.push({C:new Float32Array(C),step:stepNum});
     document.getElementById('prog').style.width=((i+1)/TOTAL_FRAMES*100).toFixed(0)+'%';
@@ -1588,7 +1694,7 @@ function renderValDatasets(){
   grid.innerHTML=VALIDATION_DATASETS.map((ds,i)=>{
     const cached=valResults[ds.id];
     const rmseHtml=cached?`<div class="rmse-badge ${cached.grade}">${cached.grade==='good'?'✓':'~'} RMSE = ${cached.rmse}</div>`:'<div class="rmse-badge" style="border-color:var(--text3);">run to compute</div>';
-    return`<div class="val-dataset-card${i===selectedValDataset?' selected':''}" onclick="selectValDataset(${i})">
+    return`<div class="val-dataset-card${i===selectedValDataset?' selected':''}${ds.isCSV?' csv-val-card':''}" onclick="selectValDataset(${i})">
       <div class="drug-name">${ds.drug}</div>
       <div class="cite-label">${ds.cite}</div>
       <div style="font-size:.72rem;color:var(--text3);">${ds.journal}</div>
@@ -1643,7 +1749,7 @@ async function runSingleValidation(datasetIdx){
   const CHUNKS=10,chunkSteps=Math.floor(p.steps/CHUNKS);
   for(let i=0;i<CHUNKS;i++){
     await new Promise(r=>setTimeout(r,0));
-    pdeChunk(C,Df,rho,dx,dt,p.lam,p.k,chunkSteps,p.mode);
+    pdeChunk(C,Df,rho,dx,dt,p.lam,p.k,1,chunkSteps,p.mode);
   }
   const modelCurve=radialCurve(C,cx,cy);
   const{profile,rmse,maxErr}=computeValidationRMSE(modelCurve,ds.points,p.r);
@@ -1816,6 +1922,186 @@ function exportValidationCSV(){
   a.click();
 }
 
+  /* =========================================================
+   FEATURE 1 — CUSTOM CSV VALIDATION
+   ========================================================= */
+  let csvDataset = null;
+  
+  function handleCSVUpload(e) {
+    const file = e.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const text = ev.target.result;
+      parseAndPreviewCSV(text, file.name);
+    };
+    reader.readAsText(file);
+  }
+  
+  function parseAndPreviewCSV(text, filename) {
+    // Detect separator
+    let sep = document.getElementById('csv-sep').value;
+    if (sep === 'auto') {
+      if (text.includes('\t')) sep = '\t';
+      else if (text.includes(';')) sep = ';';
+      else sep = ',';
+    }
+    const lines = text.trim().split(/\r?\n/).filter(l => l.trim());
+    const points = [];
+    for (const line of lines) {
+      const parts = line.split(sep).map(s => s.trim());
+      const a = parseFloat(parts[0]), b = parseFloat(parts[1]);
+      if (!isNaN(a) && !isNaN(b)) points.push([a, b]);
+    }
+    if (points.length < 3) {
+      document.getElementById('csv-status').textContent = '⚠ Need at least 3 numeric rows.';
+      document.getElementById('csv-apply-btn').disabled = true;
+      return;
+    }
+  
+    // Normalise distance to [0, tumorR] range and concentration to [0,1]
+    const distRef = document.getElementById('csv-dist-ref').value;
+    const maxDist = Math.max(...points.map(p => p[0]));
+    const minDist = Math.min(...points.map(p => p[0]));
+    const maxConc = Math.max(...points.map(p => p[1]));
+  
+    // Convert all distances to "depth from boundary" in [0, tumorR] px space
+    // tumorR is read from the current slider value
+    const tumorR = parseInt(document.getElementById('sl-r').value);
+  
+    const normalised = points.map(([d, c]) => {
+      let depth;
+      if (distRef === 'boundary') {
+        // 0 = surface; scale so max distance = tumorR
+        depth = (d - minDist) / (maxDist - minDist || 1) * tumorR;
+      } else {
+        // 0 = center; invert so 0 = surface
+        const fromCenter = (d - minDist) / (maxDist - minDist || 1) * tumorR;
+        depth = tumorR - fromCenter;
+      }
+      return [Math.max(0, depth), c / (maxConc || 1)];
+    });
+  
+    // Sort by depth
+    normalised.sort((a, b) => a[0] - b[0]);
+  
+    csvDataset = {
+      id: 'csv_custom',
+      name: filename,
+      drug: 'Custom (CSV)',
+      cite: 'User-uploaded data',
+      journal: '—',
+      params: {
+        D: parseFloat(document.getElementById('sl-D').value) / 100,
+        lam: parseFloat(document.getElementById('sl-lam').value) / 1000,
+        k: parseFloat(document.getElementById('sl-k').value) / 100,
+        r: tumorR, steps: parseInt(document.getElementById('sl-steps').value),
+        mode: document.getElementById('mode-select').value,
+      },
+      points: normalised.map(([d, c]) => [d, c]),
+      note: `User-uploaded dataset: ${filename}. n=${normalised.length} points.`,
+      drugClass: 'Custom', MW: '—',
+      isCSV: true,
+    };
+  
+    document.getElementById('csv-info').textContent =
+      `✓ Parsed ${normalised.length} points from ${filename}`;
+    document.getElementById('csv-apply-btn').disabled = false;
+    document.getElementById('csv-status').textContent = '';
+  
+    // Preview chart
+    drawCSVPreview(normalised, tumorR);
+  }
+  
+  function drawCSVPreview(pts, tumorR) {
+    const canvas = document.getElementById('csv-preview-canvas');
+    const W = 400, H = 220; canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#030507'; ctx.fillRect(0, 0, W, H);
+    const pad = { l: 40, r: 16, t: 16, b: 30 };
+    const cW = W - pad.l - pad.r, cH = H - pad.t - pad.b;
+    // Grid
+    for (let i = 0; i <= 4; i++) {
+      const y = pad.t + cH * (1 - i / 4);
+      ctx.strokeStyle = 'rgba(99,130,166,.08)'; ctx.lineWidth = .5;
+      ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(pad.l + cW, y); ctx.stroke();
+      ctx.fillStyle = 'rgba(99,130,166,.5)'; ctx.font = '9px Space Mono,monospace';
+      ctx.fillText((i / 4).toFixed(1), 2, y + 3);
+    }
+    const maxDepth = tumorR + 2;
+    // Boundary line
+    const bx = pad.l + (0 / maxDepth) * cW;
+    ctx.strokeStyle = 'rgba(0,229,255,.3)'; ctx.setLineDash([4, 3]); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(bx, pad.t); ctx.lineTo(bx, pad.t + cH); ctx.stroke();
+    ctx.setLineDash([]);
+    // Points + line
+    ctx.strokeStyle = 'rgba(61,227,131,.8)'; ctx.lineWidth = 1.5; ctx.lineJoin = 'round';
+    ctx.beginPath();
+    pts.forEach(([d, c], i) => {
+      const x = pad.l + (d / maxDepth) * cW, y = pad.t + cH * (1 - c);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+    pts.forEach(([d, c]) => {
+      const x = pad.l + (d / maxDepth) * cW, y = pad.t + cH * (1 - c);
+      ctx.fillStyle = 'var(--green)';
+      ctx.beginPath(); ctx.arc(x, y, 3.5, 0, Math.PI * 2); ctx.fill();
+    });
+    ctx.fillStyle = 'rgba(99,130,166,.5)'; ctx.font = '9px Space Mono,monospace';
+    ctx.fillText('Depth from boundary →', pad.l + cW / 2 - 70, H - 5);
+  }
+  
+  function applyCSVDataset() {
+    if (!csvDataset) return;
+    // Add/replace in VALIDATION_DATASETS at index 3 (slot after the 3 built-in)
+    if (VALIDATION_DATASETS.length > 3) VALIDATION_DATASETS.splice(3, VALIDATION_DATASETS.length - 3);
+    VALIDATION_DATASETS.push(csvDataset);
+    selectedValDataset = VALIDATION_DATASETS.length - 1;
+    renderValDatasets();
+    document.getElementById('csv-status').textContent = '✓ Dataset activated — click Run Validation.';
+  }
+  
+  function clearCSVDataset() {
+    csvDataset = null;
+    if (VALIDATION_DATASETS.length > 3) VALIDATION_DATASETS.splice(3);
+    document.getElementById('csv-info').textContent = '';
+    document.getElementById('csv-apply-btn').disabled = true;
+    document.getElementById('csv-status').textContent = '';
+    const canvas = document.getElementById('csv-preview-canvas');
+    const ctx = canvas.getContext('2d'); ctx.fillStyle = '#030507'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    renderValDatasets();
+  }
+
+  /* =========================================================
+   FEATURE 2 — STOKES–EINSTEIN D_EFF
+   ========================================================= */
+  // Constants: k_B = 1.38e-23 J/K, T = 310 K (37°C), η = 0.7e-3 Pa·s (blood-like)
+  // D = k_BT / (6πηr)
+  // Reference: r_ref = 0.5 nm → D_ref = 0.08 (normalised)
+  const SE_KB = 1.38e-23, SE_T = 310, SE_ETA = 0.7e-3;
+  const SE_R_REF = 0.5e-9; // 0.5 nm reference (small molecule)
+  const SE_D_REF = 0.08;   // normalised D at reference
+  
+  function stokesEinsteinD(r_nm) {
+    const r_m = r_nm * 1e-9;
+    const D_abs = (SE_KB * SE_T) / (6 * Math.PI * SE_ETA * r_m);
+    const D_ref_abs = (SE_KB * SE_T) / (6 * Math.PI * SE_ETA * SE_R_REF);
+    // Scale to normalised space
+    return SE_D_REF * (D_abs / D_ref_abs);
+  }
+  
+  function onParticleSizeChange(val) {
+    document.getElementById('vparticle').textContent = parseFloat(val).toFixed(1);
+    const Deff = stokesEinsteinD(parseFloat(val));
+    // Clamp to slider range [0.005, 0.25]
+    const Dclamp = Math.max(0.005, Math.min(0.25, Deff));
+    document.getElementById('se-d-val').textContent = Dclamp.toFixed(4);
+    // Sync the D slider: slider value = D * 100
+    const sliderVal = Math.round(Dclamp * 100 * 2) / 2; // step 0.5
+    document.getElementById('sl-D').value = sliderVal;
+    sy('D', sliderVal);
+  }
+
+  
 /* =========================================================
    PARAMETER SWEEP
    ========================================================= */
@@ -1847,7 +2133,7 @@ async function runSweep(){
       const D=Dvals[di],k=kvals[ki];
       const cx=Math.floor(N/3),cy=N/2,dx=1/N,dt=.9*dx*dx/(4*D+1e-10);
       const C=initC(mode,cx,cy,r);const rho=buildRho(cx,cy,r,null);const Df=buildDField(cx,cy,r,D);
-      pdeChunk(C,Df,rho,dx,dt,lam,k,steps,mode);
+      pdeChunk(C,Df,rho,dx,dt,lam,k,1,steps,mode);
       const m=calcMetrics(C,cx,cy,r);
       const val=metric==='coverage'?parseFloat(m.coverage):metric==='tumorAvg'?parseFloat(m.tumorAvg):m.depth50;
       results.push({di,ki,D,k,val,coverage:parseFloat(m.coverage),tumorAvg:parseFloat(m.tumorAvg),depth50:m.depth50});
