@@ -1493,13 +1493,20 @@ function initC(mode,cx,cy,r){
 }
 
 /* Standard PDE chunk (no IFP) */
-function pdeChunk(C, Df, rho, dx, dt, lam, k, phi, steps, mode){
-  const C2=new Float32Array(N*N);
-  for(let s=0;s<steps;s++){
-    for(let y=1;y<N-1;y++) for(let x=1;x<N-1;x++){
-      const i=y*N+x,lap=(C[(y-1)*N+x]+C[(y+1)*N+x]+C[y*N+(x-1)]+C[y*N+(x+1)]-4*C[i])/(dx*dx);
-      C2[i] = Math.max(0, C[i] + dt*(Df[i]*lap - convX - convY - lam*C[i] - k*phi*rho[i]*C[i]));
-    if(mode==='left_boundary'){for(let y=0;y<N;y++){C2[y*N]=1;C2[y*N+N-1]=0;}for(let x=0;x<N;x++){C2[x]=0;C2[(N-1)*N+x]=0;}}
+function pdeChunk(C, Df, rho, dx, dt, lam, k, phi, steps, mode) {
+  const C2 = new Float32Array(N * N);
+  for (let s = 0; s < steps; s++) {
+    for (let y = 1; y < N - 1; y++) {
+      for (let x = 1; x < N - 1; x++) {
+        const i = y * N + x;
+        const lap = (C[(y-1)*N+x] + C[(y+1)*N+x] + C[y*N+(x-1)] + C[y*N+(x+1)] - 4*C[i]) / (dx * dx);
+        C2[i] = Math.max(0, C[i] + dt * (Df[i] * lap - lam * C[i] - k * phi * rho[i] * C[i]));
+      }
+    }
+    if (mode === 'left_boundary') {
+      for (let y = 0; y < N; y++) { C2[y*N] = 1; C2[y*N+N-1] = 0; }
+      for (let x = 0; x < N; x++) { C2[x] = 0; C2[(N-1)*N+x] = 0; }
+    }
     C.set(C2);
   }
 }
@@ -1515,7 +1522,7 @@ function pdeChunkIFP(C, Df, rho, vx, vy, dx, dt, lam, k, phi, steps, mode){
       const vxi=vx[i],vyi=vy[i];
       const convX=vxi>0?vxi*(C[i]-C[y*N+(x-1)])/dx:vxi*(C[y*N+(x+1)]-C[i])/dx;
       const convY=vyi>0?vyi*(C[i]-C[(y-1)*N+x])/dx:vyi*(C[(y+1)*N+x]-C[i])/dx;
-      C2[i] = Math.max(0, C[i] + dt * Df[i] * lap - dt * lam * C[i] - dt * k * phi * rho[i] * C[i]);
+      C2[i] = Math.max(0, C[i] + dt * (Df[i] * lap - convX - convY - lam * C[i] - k * phi * rho[i] * C[i]));
     }
     if(mode==='left_boundary'){for(let y=0;y<N;y++){C2[y*N]=1;C2[y*N+N-1]=0;}for(let x=0;x<N;x++){C2[x]=0;C2[(N-1)*N+x]=0;}}
     C.set(C2);
@@ -2900,9 +2907,14 @@ function loadFromDB(idx){
   switchTab('simulation');
 }
 
-/* =========================================================
-   LANGUAGE TOGGLE (minimal version)
-   ========================================================= */
+function syReceptor(val) {
+  const phi = parseFloat(val) / 10;
+  document.getElementById('vreceptor').textContent = phi.toFixed(1) + '×';
+  document.getElementById('receptor-badge').textContent = 'k_eff = k × ' + phi.toFixed(1) + '×';
+}
+function getReceptorPhi() {
+  return parseFloat(document.getElementById('sl-receptor').value) / 10;
+}
 
 </script>
 </body>
