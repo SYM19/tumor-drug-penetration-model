@@ -157,6 +157,7 @@ var _hmt = _hmt || [];
     .tag.amber{border-color:rgba(240,165,74,.4);color:var(--amber);background:var(--amber-dim);}
     .tag.red{border-color:rgba(240,91,91,.4);color:var(--red);background:rgba(240,91,91,.08);}
     .tag.purple{border-color:rgba(167,139,250,.4);color:var(--purple);background:rgba(167,139,250,.08);}
+    .tag.cyan{border-color:rgba(0,229,255,.4);color:var(--cyan);background:rgba(0,229,255,.08);}
     .table-wrap{overflow-x:auto;}
     table{width:100%;border-collapse:collapse;font-size:.82rem;}
     th{text-align:left;font-size:.68rem;font-weight:600;color:var(--text3);padding:8px 12px;border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.07em;}
@@ -446,6 +447,7 @@ var _hmt = _hmt || [];
           <span class="hero-chip">Claude API</span>
         </div>
       </div>
+      
       <hr class="divider"/>
       <div class="section">
         <h2>What's new in v0.5</h2>
@@ -605,6 +607,17 @@ var _hmt = _hmt || [];
               <option value="point">Intratumoral injection</option>
             </select>
           </div>
+          <!-- ── PK BOUNDARY PROFILE ── -->
+          <div style="margin-bottom:1rem;">
+            <label>Boundary PK profile C(t)</label>
+            <select id="pk-mode-select" onchange="onPKModeChange()">
+              <option value="constant">Constant (steady-state IV)</option>
+              <option value="bolus">Bolus IV (peaks at t=0, exponential decay)</option>
+              <option value="infusion">Timed infusion (ramp → plateau → decay)</option>
+            </select>
+            <div style="font-family:var(--mono);font-size:.68rem;color:var(--text3);margin-top:5px;min-height:14px;" id="pk-hint">Boundary C = 1 held constant throughout simulation.</div>
+          </div>
+          
           <hr class="divider" style="margin:.875rem 0;"/>
           <div class="slider-row"><span class="slider-name">D · diffusion</span><button type="button" class="help-btn" aria-label="Help for D" onclick="openSliderHelp('D',this)">?</button><input type="range" id="sl-D" min="0.5" max="25" step="0.5" value="8" oninput="sy('D',this.value)"><span class="slider-val" id="vD">0.08</span></div>
           <div class="slider-hint">D (diffusion coefficient): 0.005–0.25 (normalised vs free diffusion in water ≈ 10−5 cm2/s). Small molecules (e.g. doxorubicin) ≈ 0.08; large antibodies ≈ 0.01.</div>
@@ -663,6 +676,30 @@ var _hmt = _hmt || [];
               D_eff (Stokes–Einstein): <span id="se-d-val" style="color:#a78bfa;font-weight:700;">0.0800</span> — auto-syncs D slider
             </div>
             <div class="slider-hint" style="margin:0;">D = k_BT/(6πηr), T=310K, η=0.7 mPa·s. Upper-bound estimate — tissue D is 5–20× lower for NPs.</div>
+          </div>
+
+          <!-- ── TWO-COMPARTMENT RELEASE ── -->
+          <div style="background:rgba(0,229,255,.03);border:1px solid rgba(0,229,255,.12);border-radius:var(--radius);padding:.875rem 1rem;margin-top:.875rem;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap;">
+              <label style="margin:0;color:var(--cyan);font-size:.8rem;font-weight:600;text-transform:none;">⊛ Two-Compartment Nanoparticle Release</label>
+              <label style="display:flex;align-items:center;gap:6px;cursor:pointer;margin:0;text-transform:none;font-size:.75rem;color:var(--text2);">
+                <input type="checkbox" id="twocomp-toggle" onchange="onTwoCompToggle()" style="width:auto;accent-color:var(--cyan);">
+                <span id="twocomp-badge" class="tag">OFF</span>
+              </label>
+            </div>
+            <div id="twocomp-params" style="display:none;">
+              <div style="background:var(--bg1);border:1px solid var(--border);border-left:3px solid var(--cyan);border-radius:0 var(--radius) var(--radius) 0;padding:.75rem 1rem;font-family:var(--mono);font-size:.75rem;color:var(--cyan);margin:.5rem 0 .75rem;line-height:1.8;">
+                ∂C_nano/∂t = D_nano·∇²C_nano − κ·C_nano<br>
+                ∂C_free/∂t = D_free·∇²C_free + κ·C_nano − λ·C_free − k·φ·ρ·C_free
+              </div>
+              <div class="slider-row">
+                <span class="slider-name" style="color:var(--cyan);">κ_release</span>
+                <input type="range" id="sl-krel" min="1" max="50" step="1" value="10" oninput="syKrel(this.value)" style="accent-color:var(--cyan);">
+                <span class="slider-val" id="vkrel" style="color:var(--cyan);">0.010</span>
+              </div>
+              <div class="slider-hint">κ: 0.001–0.05 (1/time). Slow-release liposome → low κ. Fast-dissolving micelle → high κ. Heatmap shows C_free (bioavailable drug).</div>
+            </div>
+            <p style="margin:4px 0 0;font-size:.72rem;color:var(--text3);">Models encapsulated depot diffusing slowly, releasing active drug at rate κ. Relevant for Abraxane, liposomal formulations.</p>
           </div>
 
           <div class="btn-row">
@@ -1493,7 +1530,7 @@ function initC(mode,cx,cy,r){
 }
 
 /* Standard PDE chunk (no IFP) */
-function pdeChunk(C, Df, rho, dx, dt, lam, k, phi, steps, mode) {
+function pdeChunk(C, Df, rho, dx, dt, lam, k, phi, steps, mode, boundaryC = 1) {
   const C2 = new Float32Array(N * N);
   for (let s = 0; s < steps; s++) {
     for (let y = 1; y < N - 1; y++) {
@@ -1504,7 +1541,7 @@ function pdeChunk(C, Df, rho, dx, dt, lam, k, phi, steps, mode) {
       }
     }
     if (mode === 'left_boundary') {
-      for (let y = 0; y < N; y++) { C2[y*N] = 1; C2[y*N+N-1] = 0; }
+      for (let y = 0; y < N; y++) { C2[y*N] = boundaryC; C2[y*N+N-1] = 0; }
       for (let x = 0; x < N; x++) { C2[x] = 0; C2[(N-1)*N+x] = 0; }
     }
     C.set(C2);
@@ -1512,7 +1549,7 @@ function pdeChunk(C, Df, rho, dx, dt, lam, k, phi, steps, mode) {
 }
 
 /* IFP-extended PDE chunk — upwind convection scheme for stability */
-function pdeChunkIFP(C, Df, rho, vx, vy, dx, dt, lam, k, phi, steps, mode){
+function pdeChunkIFP(C, Df, rho, vx, vy, dx, dt, lam, k, phi, steps, mode, boundaryC = 1){
   const C2=new Float32Array(N*N);
   for(let s=0;s<steps;s++){
     for(let y=1;y<N-1;y++) for(let x=1;x<N-1;x++){
@@ -1524,7 +1561,7 @@ function pdeChunkIFP(C, Df, rho, vx, vy, dx, dt, lam, k, phi, steps, mode){
       const convY=vyi>0?vyi*(C[i]-C[(y-1)*N+x])/dx:vyi*(C[(y+1)*N+x]-C[i])/dx;
       C2[i] = Math.max(0, C[i] + dt * (Df[i] * lap - convX - convY - lam * C[i] - k * phi * rho[i] * C[i]));
     }
-    if(mode==='left_boundary'){for(let y=0;y<N;y++){C2[y*N]=1;C2[y*N+N-1]=0;}for(let x=0;x<N;x++){C2[x]=0;C2[(N-1)*N+x]=0;}}
+    if(mode==='left_boundary'){for(let y=0;y<N;y++){C2[y*N]=boundaryC;C2[y*N+N-1]=0;}for(let x=0;x<N;x++){C2[x]=0;C2[(N-1)*N+x]=0;}}
     C.set(C2);
   }
 }
@@ -1576,16 +1613,43 @@ async function runSim(){
   const TOTAL_FRAMES=20,stepsPerFrame=Math.max(1,Math.floor(p.steps/TOTAL_FRAMES));
   document.getElementById('status').textContent=useIFP?'Solving PDE (IFP convection active)…':'Solving PDE…';
   animFrames.push({C:new Float32Array(C),step:0});
-  for(let i=0;i<TOTAL_FRAMES;i++){
-    await new Promise(r=>setTimeout(r,0));
-    if(useIFP) pdeChunkIFP(C, Df, rho, vx, vy, dx, dt, p.lam, p.k, p.phi, stepsPerFrame, p.mode);
-    else pdeChunk(C, Df, rho, dx, dt, p.lam, p.k, p.phi, stepsPerFrame, p.mode);
-    const stepNum=(i+1)*stepsPerFrame;
-    animFrames.push({C:new Float32Array(C),step:stepNum});
-    document.getElementById('prog').style.width=((i+1)/TOTAL_FRAMES*100).toFixed(0)+'%';
-    document.getElementById('heat-lbl').textContent=`step ${stepNum} / ${p.steps}${useIFP?' [IFP]':''}`;
-    document.getElementById('heat-corner').textContent=`max C = ${Math.max(...C).toFixed(3)}`;
-    drawHeatmap('heatmap',C,cx,cy,p.r,400,400);
+  const twoComp = getTwoCompEnabled();
+  const krel = getKrel();
+  let C_nano, C_free;
+  
+  if (twoComp) {
+    C_nano = initC(p.mode, cx, cy, p.r);
+    C_free = new Float32Array(N * N);
+    // D_free = 10× D (released small molecule more mobile), clamped at 0.25
+    const D_free_val = Math.min(0.25, p.D * 10);
+    const Df_free = buildDField(cx, cy, p.r, D_free_val);
+    animFrames.push({ C: new Float32Array(C_free), step: 0 });
+    for (let i = 0; i < TOTAL_FRAMES; i++) {
+      await new Promise(r => setTimeout(r, 0));
+      pdeChunkTwoComp(C_nano, C_free, Df, Df_free, rho, vx, vy, dx, dt, p.lam, p.k, p.phi, krel, stepsPerFrame, p.mode, useIFP);
+      const stepNum = (i + 1) * stepsPerFrame;
+      animFrames.push({ C: new Float32Array(C_free), step: stepNum });
+      document.getElementById('prog').style.width = ((i + 1) / TOTAL_FRAMES * 100).toFixed(0) + '%';
+      document.getElementById('heat-lbl').textContent = `step ${stepNum} [2-compartment]`;
+      drawHeatmap('heatmap', C_free, cx, cy, p.r, 400, 400);
+    }
+    // Use C_free as the output C for metrics/results
+    C.set(C_free);
+  } else {
+    animFrames.push({C: new Float32Array(C), step: 0});
+    for (let i = 0; i < TOTAL_FRAMES; i++) {
+      await new Promise(r => setTimeout(r, 0));
+      const stepNum = (i + 1) * stepsPerFrame;
+      const pkMode = getPKMode();
+      const boundaryC = pkBoundaryC(stepNum - stepsPerFrame, p.steps, pkMode);
+      if (useIFP) pdeChunkIFP(..., boundaryC);
+      else pdeChunk(..., boundaryC);
+      animFrames.push({C: new Float32Array(C), step: stepNum});
+      document.getElementById('prog').style.width = ((i + 1) / TOTAL_FRAMES * 100).toFixed(0) + '%';
+      document.getElementById('heat-lbl').textContent = `step ${stepNum} / ${p.steps}${useIFP ? ' [IFP]' : ''}`;
+      document.getElementById('heat-corner').textContent = `max C = ${Math.max(...C).toFixed(3)}`;
+      drawHeatmap('heatmap', C, cx, cy, p.r, 400, 400);
+    }
   }
   const curve=radialCurve(C,cx,cy),metrics=calcMetrics(C,cx,cy,p.r);
   drawCurve('curve-canvas',curve,p.r,1000,200);
@@ -2107,6 +2171,73 @@ function exportValidationCSV(){
     document.getElementById('sl-D').value = sliderVal;
     sy('D', sliderVal);
   }
+
+  /* =========================================================
+   TWO-COMPARTMENT NANOPARTICLE RELEASE
+   ========================================================= */
+  function onTwoCompToggle() {
+    const on = document.getElementById('twocomp-toggle').checked;
+    document.getElementById('twocomp-params').style.display = on ? '' : 'none';
+    document.getElementById('twocomp-badge').textContent = on ? 'ON' : 'OFF';
+    document.getElementById('twocomp-badge').className = on ? 'tag cyan' : 'tag';
+  }
+  
+  function syKrel(val) {
+    document.getElementById('vkrel').textContent = (val / 1000).toFixed(3);
+  }
+  
+  function getTwoCompEnabled() {
+    return document.getElementById('twocomp-toggle').checked;
+  }
+  function getKrel() {
+    return parseFloat(document.getElementById('sl-krel').value) / 1000;
+  }
+  
+  // Two-compartment PDE solver chunk
+  // C_nano: nanoparticle compartment; C_free: released active drug
+  // Returns C_free (what gets visualised)
+  function pdeChunkTwoComp(C_nano, C_free, Df_nano, Df_free, rho, vx, vy, dx, dt, lam, k, phi, krel, steps, mode, useIFP) {
+    const C_nano2 = new Float32Array(N * N);
+    const C_free2 = new Float32Array(N * N);
+    for (let s = 0; s < steps; s++) {
+      for (let y = 1; y < N - 1; y++) {
+        for (let x = 1; x < N - 1; x++) {
+          const i = y * N + x;
+          // Laplacians
+          const lapNano = (C_nano[(y-1)*N+x] + C_nano[(y+1)*N+x] + C_nano[y*N+(x-1)] + C_nano[y*N+(x+1)] - 4*C_nano[i]) / (dx*dx);
+          const lapFree = (C_free[(y-1)*N+x] + C_free[(y+1)*N+x] + C_free[y*N+(x-1)] + C_free[y*N+(x+1)] - 4*C_free[i]) / (dx*dx);
+          // Nano compartment: diffuses, releases at rate krel
+          C_nano2[i] = Math.max(0, C_nano[i] + dt * (Df_nano[i] * lapNano - krel * C_nano[i]));
+          // Free compartment: gains from nano release, loses to degradation + uptake
+          let convX = 0, convY = 0;
+          if (useIFP) {
+            const vxi = vx[i], vyi = vy[i];
+            convX = vxi > 0 ? vxi*(C_free[i]-C_free[y*N+(x-1)])/dx : vxi*(C_free[y*N+(x+1)]-C_free[i])/dx;
+            convY = vyi > 0 ? vyi*(C_free[i]-C_free[(y-1)*N+x])/dx : vyi*(C_free[(y+1)*N+x]-C_free[i])/dx;
+          }
+          C_free2[i] = Math.max(0, C_free[i] + dt * (
+            Df_free[i] * lapFree
+            + krel * C_nano[i]   // source from nano compartment
+            - convX - convY
+            - lam * C_free[i]
+            - k * phi * rho[i] * C_free[i]
+          ));
+        }
+      }
+      // Boundary conditions
+      if (mode === 'left_boundary') {
+        for (let y = 0; y < N; y++) {
+          C_nano2[y*N] = 1; C_nano2[y*N+N-1] = 0;
+          C_free2[y*N] = 0; C_free2[y*N+N-1] = 0; // free drug builds up internally
+        }
+        for (let x = 0; x < N; x++) { C_nano2[x] = 0; C_nano2[(N-1)*N+x] = 0; C_free2[x] = 0; C_free2[(N-1)*N+x] = 0; }
+      }
+      C_nano.set(C_nano2);
+      C_free.set(C_free2);
+    }
+  }
+
+  
 
   
 /* =========================================================
@@ -2843,10 +2974,10 @@ async function runCompare(){
   const pA=getCmpParams('A'),pB=getCmpParams('B');
   const cx=Math.floor(N/3),cy=N/2,dx=1/N;const CHUNKS=10;
   const dtA=.9*dx*dx/(4*pA.D+1e-10);const CA=initC(pA.mode,cx,cy,pA.r);const rhoA=buildRho(cx,cy,pA.r,null);const DfA=buildDField(cx,cy,pA.r,pA.D);const chunkA=Math.floor(pA.steps/CHUNKS);
-  for(let i=0;i<CHUNKS;i++){await new Promise(r=>setTimeout(r,0));pdeChunk(CA,DfA,rhoA,dx,dtA,pA.lam,pA.k,chunkA,pA.mode);document.getElementById('cmp-prog').style.width=((i+1)/CHUNKS/2*100).toFixed(0)+'%';}
+  for(let i=0;i<CHUNKS;i++){await new Promise(r=>setTimeout(r,0));pdeChunk(CA,DfA,rhoA,dx,dtA,pA.lam,pA.k,1,chunkA,pA.mode);document.getElementById('cmp-prog').style.width=((i+1)/CHUNKS/2*100).toFixed(0)+'%';}
   document.getElementById('cmp-status').textContent='Running Drug B…';
   const dtB=.9*dx*dx/(4*pB.D+1e-10);const CB=initC(pB.mode,cx,cy,pB.r);const rhoB=buildRho(cx,cy,pB.r,null);const DfB=buildDField(cx,cy,pB.r,pB.D);const chunkB=Math.floor(pB.steps/CHUNKS);
-  for(let i=0;i<CHUNKS;i++){await new Promise(r=>setTimeout(r,0));pdeChunk(CB,DfB,rhoB,dx,dtB,pB.lam,pB.k,chunkB,pB.mode);document.getElementById('cmp-prog').style.width=(50+(i+1)/CHUNKS/2*100).toFixed(0)+'%';}
+  for(let i=0;i<CHUNKS;i++){await new Promise(r=>setTimeout(r,0));pdeChunk(CB,DfB,rhoB,dx,dtB,pB.lam,pB.k,1,chunkB,pB.mode);document.getElementById('cmp-prog').style.width=(50+(i+1)/CHUNKS/2*100).toFixed(0)+'%';}
   drawHeatmap('cmp-heatmap-A',CA,cx,cy,pA.r,400,400);drawHeatmap('cmp-heatmap-B',CB,cx,cy,pB.r,400,400);
   const mA=calcMetrics(CA,cx,cy,pA.r),mB=calcMetrics(CB,cx,cy,pB.r);
   const curveA=radialCurve(CA,cx,cy),curveB=radialCurve(CB,cx,cy);
@@ -2914,6 +3045,37 @@ function syReceptor(val) {
 }
 function getReceptorPhi() {
   return parseFloat(document.getElementById('sl-receptor').value) / 10;
+}
+
+  /* =========================================================
+   FEATURE 6 — TIME-VARYING PK BOUNDARY CONDITION
+   ========================================================= */
+function onPKModeChange() {
+  const mode = document.getElementById('pk-mode-select').value;
+  const hints = {
+    constant: 'Boundary C = 1 held constant throughout simulation.',
+    bolus:    'Bolus: C(t) = exp(−t/τ), τ = steps/3. Peak at t=0, decays exponentially.',
+    infusion: 'Infusion: ramp up 0–20% → plateau 20–60% → exponential decay 60–100%.',
+  };
+  document.getElementById('pk-hint').textContent = hints[mode];
+}
+
+function pkBoundaryC(step, totalSteps, pkMode) {
+  if (pkMode === 'constant') return 1.0;
+  const t = step / totalSteps; // normalised time [0,1]
+  if (pkMode === 'bolus') {
+    return Math.exp(-t / (1/3)); // τ = 1/3 of total sim time
+  }
+  if (pkMode === 'infusion') {
+    if (t < 0.2) return t / 0.2;           // ramp up
+    if (t < 0.6) return 1.0;               // plateau
+    return Math.exp(-(t - 0.6) / 0.2);     // exponential decay
+  }
+  return 1.0;
+}
+
+function getPKMode() {
+  return document.getElementById('pk-mode-select').value;
 }
 
 </script>
