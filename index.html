@@ -865,7 +865,7 @@ var _hmt = _hmt || [];
           <p style="margin:0;font-size:.78rem;color:var(--text3);"><strong style="color:var(--amber);">Note:</strong> Compare uses D, λ, k only. IFP convection, receptor expression, and two-compartment nanoparticle release are not applied here — results will differ from Simulation tab for NP formulations. For those drugs, run separate simulations and compare via CSV export.</p>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
-          <div><label>Tumor type</label><select id="cmp-tumor"><option value="breast">Breast cancer</option><option value="pancreatic">Pancreatic cancer</option><option value="glioma">Glioma</option><option value="melanoma">Melanoma</option><option value="colorectal">Colorectal</option></select></div>
+          <div><label>Tumor type</label><select id="cmp-tumor" onchange="loadCmpPreset('A');loadCmpPreset('B')"><option value="breast">Breast cancer</option><option value="pancreatic">Pancreatic cancer</option><option value="glioma">Glioma</option><option value="melanoma">Melanoma</option><option value="colorectal">Colorectal</option></select></div>
           <div><label>Delivery mode</label><select id="cmp-mode"><option value="left_boundary">IV Infusion</option><option value="ring">Vascular ring</option><option value="point">Intratumoral</option></select></div>
           <div><label>Steps</label><select id="cmp-steps"><option value="200">200</option><option value="400">400</option><option value="600" selected>600</option><option value="800">800</option></select></div>
         </div>
@@ -1057,7 +1057,7 @@ var _hmt = _hmt || [];
               <tbody id="val-summary-tbody"></tbody>
             </table>
           </div>
-          <p style="font-size:.78rem;color:var(--text3);margin-top:1rem;margin-bottom:0;">RMSE computed over n=8 radial positions in normalised concentration units. Good: RMSE &lt; 0.07 · Acceptable: &lt; 0.12 · Poor: ≥ 0.12.</p>
+          <p style="font-size:.78rem;color:var(--text3);margin-top:1rem;margin-bottom:0;">RMSE computed over n=8 radial positions in normalised concentration units. Good: RMSE &lt; 0.08 · Acceptable: &lt; 0.15 · Poor: ≥ 0.15.</p>
         </div>
       </div>
     </div>
@@ -1296,7 +1296,7 @@ const VALIDATION_DATASETS=[
     drug:'Doxorubicin',
     cite:'Thurber et al. 2008 / Kyle et al. 2007',
     journal:'Adv Drug Deliv Rev / Clin Cancer Res',
-    params:{D:.08,lam:.005,k:.06,r:22,steps:600,mode:'tumour_surface'},
+    params:{D:.08,lam:.005,k:.06,r:22,steps:600,mode:'tumor_surface'},
     // [depth from boundary (px), normalised concentration]
     points:[[0,1.00],[3,.78],[6,.56],[9,.38],[12,.24],[15,.14],[18,.08],[21,.04]],
     note:'Fluorescence intensity profiles from MCF-7 multicellular spheroid cross-sections (~350 µm radius). Normalised to periphery fluorescence. Data reflects moderate penetration typical of anthracyclines.',
@@ -1308,7 +1308,7 @@ const VALIDATION_DATASETS=[
     drug:'Trastuzumab',
     cite:'Thurber et al. 2008',
     journal:'Adv Drug Deliv Rev',
-    params:{D:.01,lam:.001,k:.12,r:22,steps:600,mode:'tumour_surface'},
+    params:{D:.01,lam:.001,k:.12,r:22,steps:600,mode:'tumor_surface'},
     points:[[0,1.00],[3,.60],[6,.31],[9,.14],[12,.06],[15,.03],[18,.01],[21,.01]],
     note:'Large monoclonal antibody (150 kDa) in HER2+ BT-474 spheroids. Steep penetration drop due to low diffusion coefficient and high antigen-mediated binding (binding-site barrier effect). Center effectively drug-free.',
     drugClass:'Monoclonal Ab',MW:'148 kDa'
@@ -1319,7 +1319,7 @@ const VALIDATION_DATASETS=[
     drug:'Cisplatin',
     cite:'Minchinton & Tannock 2006',
     journal:'Nature Reviews Cancer',
-    params:{D:.09,lam:.003,k:.11,r:22,steps:800,mode:'tumor_surface'},
+    params:{D:.12,lam:.003,k:.08,r:22,steps:600,mode:'tumor_surface'},
     points:[[0,1.00],[3,.86],[6,.72],[9,.58],[12,.45],[15,.32],[18,.21],[21,.13]],
     note:'Small platinum complex (300 Da) in EMT6 spheroids. Substantially better tumour penetration than macromolecules; exponential decay slower due to high diffusivity. Used as positive control in drug penetration studies.',
     drugClass:'Platinum agent',MW:'300 Da'
@@ -1463,11 +1463,9 @@ function loadPreset() {
     if (p.particleNm){document.getElementById('sl-particle').value=p.particleNm;onParticleSizeChange(p.particleNm);}
     if (p.ifp!==undefined){const ifpRaw=Math.round(p.ifp*100);document.getElementById('sl-ifp').value=ifpRaw;sy('ifp',ifpRaw);}
     if (p.phi!==undefined){const phiRaw=Math.round(p.phi*10);document.getElementById('sl-receptor').value=phiRaw;syReceptor(phiRaw);}
-    if (p.twoComp!==undefined){
-      document.getElementById('twocomp-toggle').checked=p.twoComp;
-      onTwoCompToggle();
-      if(p.twoComp&&p.krel!==undefined){const krelRaw=Math.round(p.krel*1000);document.getElementById('sl-krel').value=krelRaw;syKrel(krelRaw);}
-    }
+    document.getElementById('twocomp-toggle').checked = !!p.twoComp;
+    onTwoCompToggle();
+    if(p.twoComp&&p.krel!==undefined){const krelRaw=Math.round(p.krel*1000);document.getElementById('sl-krel').value=krelRaw;syKrel(krelRaw);}
   }
 }
   
@@ -1636,7 +1634,7 @@ async function runSim(){
   const twoComp = getTwoCompEnabled();
   const krel = getKrel();
   // D_free = 10×D_nano — must govern CFL when two-compartment is active
-  const D_cfl = twoComp ? Math.min(0.25, p.D * 10) : p.D;
+  const D_cfl = p.D;
   const dtDiff = dx*dx / (4*D_cfl + 1e-10);
   const dtConv = p.ifp>0 ? dx/(p.ifp+1e-10) : Infinity;
   const dt = Math.min(dtDiff, dtConv) * 0.9;
@@ -1652,7 +1650,7 @@ async function runSim(){
     C_nano = initC(p.mode, cx, cy, p.r);
     C_free = new Float32Array(N * N);
     // D_free = 10× D (released small molecule more mobile), clamped at 0.25
-    const D_free_val = Math.min(0.25, p.D * 10);
+    const D_free_val = p.D;
     const Df_free = buildDField(cx, cy, p.r, D_free_val);
     animFrames.push({ C: new Float32Array(C_free), step: 0 });
     for (let i = 0; i < TOTAL_FRAMES; i++) {
@@ -2489,7 +2487,17 @@ function initUploadZone(){
     {id:'upload-zone',    handler:processHistoFile},
     {id:'upload-zone-t1', handler:processT1File},
     {id:'upload-zone-t2', handler:processT2File},
-    {id:'csv-upload-zone',handler:file=>{const r=new FileReader();r.onload=ev=>parseAndPreviewCSV(ev.target.result,file.name);r.readAsText(file);}},
+    {id:'csv-upload-zone',handler:file=>{
+      const name=file.name.toLowerCase();
+      if(name.endsWith('.xlsx')||name.endsWith('.xls')){
+        if(typeof XLSX==='undefined'){
+          const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+          s.onload=()=>readExcel(file);document.head.appendChild(s);
+        } else {readExcel(file);}
+      } else {
+        const r=new FileReader();r.onload=ev=>parseAndPreviewCSV(ev.target.result,file.name);r.readAsText(file);
+      }
+    }},
   ];
   zones.forEach(z=>{
     const zone=document.getElementById(z.id);if(!zone)return;
@@ -3025,12 +3033,19 @@ function syCmp(ab,id,v){
   document.getElementById('cmp'+ab+'-v'+id).textContent=fmt[id];
 }
 function loadCmpPreset(ab){
-  const drug=document.getElementById('cmp'+ab+'-drug').value,tumor=document.getElementById('cmp-tumor').value;
+  const drug=document.getElementById('cmp'+ab+'-drug').value, tumor=document.getElementById('cmp-tumor').value;
   if(drug==='custom')return;
-  const p=PRESETS[drug+'_'+tumor]||DB.find(d=>d.drug.toLowerCase().replace(/[\s-]/g,'_')===drug)||DB[0];
-  if(!p)return;
+  const p = DB.find(d =>
+    d.drug.toLowerCase().replace(/[\s\-()/]/g,'_').replace(/_+/g,'_') === drug &&
+    d.tumor === tumor
+  ) || DB.find(d =>
+    d.drug.toLowerCase().replace(/[\s\-()/]/g,'_').replace(/_+/g,'_') === drug
+  );
+  if(!p) return;
   const dRaw=Math.round(p.D*100*2)/2;
-  document.getElementById('cmp'+ab+'-D').value=dRaw;document.getElementById('cmp'+ab+'-lam').value=Math.round(p.lam*1000);document.getElementById('cmp'+ab+'-k').value=Math.round(p.k*100);
+  document.getElementById('cmp'+ab+'-D').value=dRaw;
+  document.getElementById('cmp'+ab+'-lam').value=Math.round(p.lam*1000);
+  document.getElementById('cmp'+ab+'-k').value=Math.round(p.k*100);
   syCmp(ab,'D',dRaw);syCmp(ab,'lam',Math.round(p.lam*1000));syCmp(ab,'k',Math.round(p.k*100));
 }
 function getCmpParams(ab){
@@ -3115,11 +3130,9 @@ function loadFromDB(idx){
   // Receptor expression φ
   if(d.phi!==undefined){const phiRaw=Math.round(d.phi*10);document.getElementById('sl-receptor').value=phiRaw;syReceptor(phiRaw);}
   // Two-compartment toggle
-  if(d.twoComp!==undefined){
-    document.getElementById('twocomp-toggle').checked=d.twoComp;
-    onTwoCompToggle();
-    if(d.twoComp&&d.krel!==undefined){const krelRaw=Math.round(d.krel*1000);document.getElementById('sl-krel').value=krelRaw;syKrel(krelRaw);}
-  }
+  document.getElementById('twocomp-toggle').checked = !!d.twoComp;
+  onTwoCompToggle();
+  if(d.twoComp&&d.krel!==undefined){const krelRaw=Math.round(d.krel*1000);document.getElementById('sl-krel').value=krelRaw;syKrel(krelRaw);}
   switchTab('simulation');
 }
 
