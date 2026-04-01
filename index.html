@@ -1259,12 +1259,12 @@ const DB=[
   {drug:'Paclitaxel',tumor:'pancreatic',D:.015,lam:.006,k:.03,r:28,diff:'very high',cls:'Taxane'},
   {drug:'Paclitaxel',tumor:'glioma',D:.08,lam:.003,k:.045,r:20,diff:'medium',cls:'Taxane'},
   {drug:'Paclitaxel',tumor:'melanoma',D:.04,lam:.006,k:.06,r:24,diff:'high',cls:'Taxane'},
-  {drug:'nab-Paclitaxel (Abraxane)',tumor:'breast',D:.0028,lam:.004,k:.05,r:22,diff:'medium',cls:'NP Taxane',particleNm:130,note:'130nm albumin-bound NP; D_eff via Stokes-Einstein (pre-validation estimate)'},
-  {drug:'nab-Paclitaxel (Abraxane)',tumor:'pancreatic',D:.001,lam:.006,k:.03,r:28,diff:'very high',cls:'NP Taxane',particleNm:130,note:'130nm; severe stromal barrier in PDAC'},
-  {drug:'Liposomal Paclitaxel',tumor:'breast',D:.0024,lam:.003,k:.045,r:22,diff:'medium',cls:'NP Taxane',particleNm:150,note:'150nm liposome; slow ECM diffusion'},
-  {drug:'Liposomal Paclitaxel',tumor:'pancreatic',D:.0009,lam:.005,k:.028,r:28,diff:'very high',cls:'NP Taxane',particleNm:150},
-  {drug:'Micellar Paclitaxel',tumor:'breast',D:.018,lam:.004,k:.052,r:22,diff:'medium',cls:'NP Taxane',particleNm:25,note:'20–30nm micelle; better penetration than larger NPs'},
-  {drug:'Micellar Paclitaxel',tumor:'pancreatic',D:.007,lam:.006,k:.032,r:28,diff:'high',cls:'NP Taxane',particleNm:25},
+  {drug:'nab-Paclitaxel (Abraxane)',tumor:'breast',D:.0028,lam:.004,k:.05,r:22,diff:'medium',cls:'NP Taxane',particleNm:130,ifp:0.02,twoComp:true,krel:0.020,phi:1.0,note:'130nm albumin-bound NP; D_eff via Stokes-Einstein (pre-validation estimate)'},
+  {drug:'nab-Paclitaxel (Abraxane)',tumor:'pancreatic',D:.001,lam:.006,k:.03,r:28,diff:'very high',cls:'NP Taxane',particleNm:130,ifp:0.08,twoComp:true,krel:0.020,phi:1.0,note:'130nm; severe stromal barrier in PDAC'},
+  {drug:'Liposomal Paclitaxel',tumor:'breast',D:.0024,lam:.003,k:.045,r:22,diff:'medium',cls:'NP Taxane',particleNm:150,ifp:0.03,twoComp:true,krel:0.005,phi:1.0,note:'150nm liposome; slow ECM diffusion'},
+  {drug:'Liposomal Paclitaxel',tumor:'pancreatic',D:.0009,lam:.005,k:.028,r:28,diff:'very high',cls:'NP Taxane',particleNm:150,ifp:0.10,twoComp:true,krel:0.005,phi:1.0},
+  {drug:'Micellar Paclitaxel',tumor:'breast',D:.018,lam:.004,k:.052,r:22,diff:'medium',cls:'NP Taxane',particleNm:25,ifp:0.02,twoComp:false,krel:0.035,phi:1.0,note:'20–30nm micelle; better penetration than larger NPs'},
+  {drug:'Micellar Paclitaxel',tumor:'pancreatic',D:.007,lam:.006,k:.032,r:28,diff:'high',cls:'NP Taxane',particleNm:25,ifp:0.06,twoComp:false,krel:0.035,phi:1.0},
   {drug:'Cisplatin',tumor:'breast',D:.12,lam:.003,k:.08,r:22,diff:'low',cls:'Platinum'},
   {drug:'Cisplatin',tumor:'pancreatic',D:.03,lam:.005,k:.05,r:28,diff:'high',cls:'Platinum'},
   {drug:'Cisplatin',tumor:'glioma',D:.15,lam:.002,k:.07,r:20,diff:'low',cls:'Platinum'},
@@ -1332,7 +1332,7 @@ let valResults={}; // cache all 3 RMSE values
 let simResult=null, aiParams=null, apiKey='';
 let animFrames=[], animIdx=0, animTimer=null, animParams=null;
 let histoImageData=null, mriT1ImageData=null, mriT2ImageData=null, customRhoField=null;
-let sweepData=null, cmpLastResult=null;
+let sweepData=null, cmpLastResult=null;let simAborted = false;
 
 /* =========================================================
    INIT
@@ -1457,10 +1457,13 @@ function loadPreset() {
   ) || DB.find(d => d.drug.toLowerCase().replace(/[\s\-()/]/g,'_').replace(/_+/g,'_') === drug);
   if (p) {
     setSliders(p);
-    // Auto-sync particle size slider if entry has particleNm
-    if (p.particleNm) {
-      document.getElementById('sl-particle').value = p.particleNm;
-      onParticleSizeChange(p.particleNm);
+    if (p.particleNm){document.getElementById('sl-particle').value=p.particleNm;onParticleSizeChange(p.particleNm);}
+    if (p.ifp!==undefined){const ifpRaw=Math.round(p.ifp*100);document.getElementById('sl-ifp').value=ifpRaw;sy('ifp',ifpRaw);}
+    if (p.phi!==undefined){const phiRaw=Math.round(p.phi*10);document.getElementById('sl-receptor').value=phiRaw;syReceptor(phiRaw);}
+    if (p.twoComp!==undefined){
+      document.getElementById('twocomp-toggle').checked=p.twoComp;
+      onTwoCompToggle();
+      if(p.twoComp&&p.krel!==undefined){const krelRaw=Math.round(p.krel*1000);document.getElementById('sl-krel').value=krelRaw;syKrel(krelRaw);}
     }
   }
 }
@@ -1553,7 +1556,6 @@ function pdeChunk(C, Df, rho, dx, dt, lam, k, phi, steps, mode, boundaryC = 1) {
       for(let x=0;x<N;x++){C2[x]=1;C2[(N-1)*N+x]=1;}
     }
     C.set(C2);
-    C.set(C2);
   }
 }
 
@@ -1605,6 +1607,7 @@ function calcMetrics(C,cx,cy,r){
    RUN SIMULATION
    ========================================================= */
 async function runSim(){
+  simAborted = false; 
   const btn=document.getElementById('run-btn');btn.disabled=true;btn.textContent='⟳ Running…';
   document.getElementById('export-btn').disabled=true;
   document.getElementById('anim-panel').style.display='none';
@@ -1621,7 +1624,6 @@ async function runSim(){
   const useIFP=p.ifp>0;
   const TOTAL_FRAMES=20,stepsPerFrame=Math.max(1,Math.floor(p.steps/TOTAL_FRAMES));
   document.getElementById('status').textContent=useIFP?'Solving PDE (IFP convection active)…':'Solving PDE…';
-  animFrames.push({C:new Float32Array(C),step:0});
   const twoComp = getTwoCompEnabled();
   const krel = getKrel();
   let C_nano, C_free;
@@ -1635,6 +1637,7 @@ async function runSim(){
     animFrames.push({ C: new Float32Array(C_free), step: 0 });
     for (let i = 0; i < TOTAL_FRAMES; i++) {
       await new Promise(r => setTimeout(r, 0));
+      if (simAborted) return;
       pdeChunkTwoComp(C_nano, C_free, Df, Df_free, rho, vx, vy, dx, dt, p.lam, p.k, p.phi, krel, stepsPerFrame, p.mode, useIFP);
       const stepNum = (i + 1) * stepsPerFrame;
       animFrames.push({ C: new Float32Array(C_free), step: stepNum });
@@ -1648,6 +1651,7 @@ async function runSim(){
     animFrames.push({C: new Float32Array(C), step: 0});
     for (let i = 0; i < TOTAL_FRAMES; i++) {
       await new Promise(r => setTimeout(r, 0));
+      if (simAborted) return;
       const stepNum = (i + 1) * stepsPerFrame;
       const pkMode = getPKMode();
       const boundaryC = pkBoundaryC(stepNum - stepsPerFrame, p.steps, pkMode);
@@ -1676,16 +1680,22 @@ else pdeChunk(C, Df, rho, dx, dt, p.lam, p.k, p.phi, stepsPerFrame, p.mode, boun
   btn.disabled=false;btn.textContent='▶ Run simulation';
 }
 function resetSim(){
-  stopAnim();animFrames=[];animIdx=0;animParams=null;
+  simAborted = true;
+  stopAnim(); animFrames=[]; animIdx=0; animParams=null;
   document.getElementById('anim-panel').style.display='none';
   document.getElementById('play-btn').textContent='▶ Play';
+  document.getElementById('run-btn').disabled=false;
+  document.getElementById('run-btn').textContent='▶ Run simulation';
+  document.getElementById('export-btn').disabled=true;
   ['heatmap','curve-canvas','anim-heatmap','anim-curve'].forEach(id=>{
     const c=document.getElementById(id);if(!c)return;
     const ctx=c.getContext('2d');ctx.fillStyle='#030507';ctx.fillRect(0,0,c.width,c.height);
   });
   ['m-tavg','m-max','m-depth','m-cov'].forEach(id=>document.getElementById(id).textContent='—');
-  document.getElementById('prog').style.width='0%';document.getElementById('status').textContent='';
-  document.getElementById('heat-lbl').textContent='ready — press Run';document.getElementById('heat-corner').textContent='';
+  document.getElementById('prog').style.width='0%';
+  document.getElementById('status').textContent='';
+  document.getElementById('heat-lbl').textContent='ready — press Run';
+  document.getElementById('heat-corner').textContent='';
   simResult=null;
 }
 
@@ -1786,7 +1796,11 @@ function renderValDatasets(){
     </div>`;
   }).join('');
 }
-function selectValDataset(i){selectedValDataset=i;renderValDatasets();}
+function selectValDataset(i){
+  selectedValDataset=i;
+  renderValDatasets();
+  if(valResults[VALIDATION_DATASETS[i].id]) displayValidationResult(i);
+}
 
 async function runValidation(){
   const btn=document.getElementById('val-run-btn');
@@ -2240,6 +2254,10 @@ function exportValidationCSV(){
           C_free2[y*N] = 0; C_free2[y*N+N-1] = 0; // free drug builds up internally
         }
         for (let x = 0; x < N; x++) { C_nano2[x] = 0; C_nano2[(N-1)*N+x] = 0; C_free2[x] = 0; C_free2[(N-1)*N+x] = 0; }
+      }
+      else if (mode === 'outer_boundary') {
+        for(let y=0;y<N;y++){C_nano2[y*N]=1;C_nano2[y*N+N-1]=1;C_free2[y*N]=0;C_free2[y*N+N-1]=0;}
+        for(let x=0;x<N;x++){C_nano2[x]=1;C_nano2[(N-1)*N+x]=1;C_free2[x]=0;C_free2[(N-1)*N+x]=0;}
       }
       C_nano.set(C_nano2);
       C_free.set(C_free2);
@@ -3040,10 +3058,22 @@ function filterDB(){
   renderDB();
 }
 function loadFromDB(idx){
-  const d=DB[idx];setSliders(d);
-  const opt=[...document.getElementById('drug-select').options].find(o=>o.value===d.drug.toLowerCase().replace(/[\s-]/g,'_'));
+  const d=DB[idx]; setSliders(d);
+  const opt=[...document.getElementById('drug-select').options].find(o=>o.value===d.drug.toLowerCase().replace(/[\s\-()/]/g,'_').replace(/_+/g,'_'));
   document.getElementById('drug-select').value=opt?opt.value:'custom';
   document.getElementById('tumor-select').value=d.tumor;
+  // Particle size → D_eff
+  if(d.particleNm){document.getElementById('sl-particle').value=d.particleNm;onParticleSizeChange(d.particleNm);}
+  // IFP magnitude
+  if(d.ifp!==undefined){const ifpRaw=Math.round(d.ifp*100);document.getElementById('sl-ifp').value=ifpRaw;sy('ifp',ifpRaw);}
+  // Receptor expression φ
+  if(d.phi!==undefined){const phiRaw=Math.round(d.phi*10);document.getElementById('sl-receptor').value=phiRaw;syReceptor(phiRaw);}
+  // Two-compartment toggle
+  if(d.twoComp!==undefined){
+    document.getElementById('twocomp-toggle').checked=d.twoComp;
+    onTwoCompToggle();
+    if(d.twoComp&&d.krel!==undefined){const krelRaw=Math.round(d.krel*1000);document.getElementById('sl-krel').value=krelRaw;syKrel(krelRaw);}
+  }
   switchTab('simulation');
 }
 
