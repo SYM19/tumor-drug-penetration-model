@@ -1865,7 +1865,7 @@ async function runSingleValidation(datasetIdx){
   }
   const modelCurve=radialCurve(C,cx,cy);
   const{profile,rmse,maxErr}=computeValidationRMSE(modelCurve,ds.points,p.r);
-  const grade = rmse<.40?'good':rmse<.65?'ok':'poor';
+  const grade = rmse<.20?'good':rmse<.40?'ok':'poor';
   return{modelCurve:Array.from(modelCurve),profile,rmse:rmse.toFixed(4),maxErr:maxErr.toFixed(4),grade,C:Array.from(C),cx,cy};
 }
 
