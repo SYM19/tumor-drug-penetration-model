@@ -1296,7 +1296,7 @@ const VALIDATION_DATASETS=[
     drug:'Doxorubicin',
     cite:'Thurber et al. 2008 / Kyle et al. 2007',
     journal:'Adv Drug Deliv Rev / Clin Cancer Res',
-    params:{D:.08,lam:.005,k:.06,r:22,steps:600,mode:'tumor_surface'},
+    params:{D:.08,lam:.005,k:.06,r:22,steps:600,mode:'ring'},
     // [depth from boundary (px), normalised concentration]
     points:[[0,1.00],[3,.78],[6,.56],[9,.38],[12,.24],[15,.14],[18,.08],[21,.04]],
     note:'Fluorescence intensity profiles from MCF-7 multicellular spheroid cross-sections (~350 µm radius). Normalised to periphery fluorescence. Data reflects moderate penetration typical of anthracyclines.',
@@ -1308,7 +1308,7 @@ const VALIDATION_DATASETS=[
     drug:'Trastuzumab',
     cite:'Thurber et al. 2008',
     journal:'Adv Drug Deliv Rev',
-    params:{D:.01,lam:.001,k:.12,r:22,steps:600,mode:'tumor_surface'},
+    params:{D:.01,lam:.001,k:.12,r:22,steps:600,mode:'ring'},
     points:[[0,1.00],[3,.60],[6,.31],[9,.14],[12,.06],[15,.03],[18,.01],[21,.01]],
     note:'Large monoclonal antibody (150 kDa) in HER2+ BT-474 spheroids. Steep penetration drop due to low diffusion coefficient and high antigen-mediated binding (binding-site barrier effect). Center effectively drug-free.',
     drugClass:'Monoclonal Ab',MW:'148 kDa'
@@ -1319,7 +1319,7 @@ const VALIDATION_DATASETS=[
     drug:'Cisplatin',
     cite:'Minchinton & Tannock 2006',
     journal:'Nature Reviews Cancer',
-    params:{D:.12,lam:.003,k:.08,r:22,steps:600,mode:'tumor_surface'},
+    params:{D:.12,lam:.003,k:.08,r:22,steps:600,mode:'ring'},
     points:[[0,1.00],[3,.86],[6,.72],[9,.58],[12,.45],[15,.32],[18,.21],[21,.13]],
     note:'Small platinum complex (300 Da) in EMT6 spheroids. Substantially better tumour penetration than macromolecules; exponential decay slower due to high diffusivity. Used as positive control in drug penetration studies.',
     drugClass:'Platinum agent',MW:'300 Da'
@@ -1856,7 +1856,7 @@ async function runValidation(){
 async function runSingleValidation(datasetIdx){
   const ds=VALIDATION_DATASETS[datasetIdx];
   const p=ds.params;
-  const cx=N/2|0, cy=N/2|0, dx=1/N, dt=.9*dx*dx/(4*p.D+1e-10);
+  const cx=Math.floor(N/3), cy=N/2|0, dx=1/N, dt=.9*dx*dx/(4*p.D+1e-10);
   const C=initC(p.mode,cx,cy,p.r),rho=buildRho(cx,cy,p.r,null),Df=buildDField(cx,cy,p.r,p.D);
   const CHUNKS=10,chunkSteps=Math.floor(p.steps/CHUNKS);
   for(let i=0;i<CHUNKS;i++){
@@ -2294,6 +2294,14 @@ function readExcel(file){
         for(let y=0;y<N;y++){C_nano2[y*N]=1;C_nano2[y*N+N-1]=1;C_free2[y*N]=0;C_free2[y*N+N-1]=0;}
         for(let x=0;x<N;x++){C_nano2[x]=1;C_nano2[(N-1)*N+x]=1;C_free2[x]=0;C_free2[(N-1)*N+x]=0;}
       }
+        else if(mode==='ring'){
+    const rv=r_+5;
+    for(let y=0;y<N;y++) for(let x=0;x<N;x++){
+        if(Math.abs(Math.sqrt((x-cx)**2+(y-cy)**2)-rv)<2){
+            C_nano2[y*N+x]=1;C_free2[y*N+x]=0;
+        }
+    }
+}
       else if(mode==='tumor_surface'){
         for(let y=0;y<N;y++) for(let x=0;x<N;x++){
           if(Math.abs(Math.sqrt((x-cx)**2+(y-cy)**2)-r_)<1.5){
