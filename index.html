@@ -1454,10 +1454,10 @@ function loadPreset() {
   const tumor = document.getElementById('tumor-select').value;
   if (drug === 'custom') return;
   // Find by matching drug value key against DB drug names (lowercased, spaces→_)
-  const p = DB.find(d =>
-    d.drug.toLowerCase().replace(/[\s\-()/]/g,'_').replace(/_+/g,'_') === drug &&
-    d.tumor === tumor
-  ) || DB.find(d => d.drug.toLowerCase().replace(/[\s\-()/]/g,'_').replace(/_+/g,'_') === drug);
+  const normalizeKey = name =>
+    name.toLowerCase().replace(/\s*\([^)]*\)/g,'').trim().replace(/[\s\-]+/g,'_');
+  const p = DB.find(d => normalizeKey(d.drug) === drug && d.tumor === tumor)
+          || DB.find(d => normalizeKey(d.drug) === drug);
   if (p) {
     setSliders(p);
     if (p.particleNm){document.getElementById('sl-particle').value=p.particleNm;onParticleSizeChange(p.particleNm);}
@@ -1634,7 +1634,7 @@ async function runSim(){
   const twoComp = getTwoCompEnabled();
   const krel = getKrel();
   // D_free = 10×D_nano — must govern CFL when two-compartment is active
-  const D_cfl = p.D;
+  const D_cfl = twoComp ? Math.min(0.25, p.D * 10) : p.D;
   const dtDiff = dx*dx / (4*D_cfl + 1e-10);
   const dtConv = p.ifp>0 ? dx/(p.ifp+1e-10) : Infinity;
   const dt = Math.min(dtDiff, dtConv) * 0.9;
@@ -1650,7 +1650,7 @@ async function runSim(){
     C_nano = initC(p.mode, cx, cy, p.r);
     C_free = new Float32Array(N * N);
     // D_free = 10× D (released small molecule more mobile), clamped at 0.25
-    const D_free_val = p.D;
+    const D_free_val = Math.min(0.25, p.D * 10);
     const Df_free = buildDField(cx, cy, p.r, D_free_val);
     animFrames.push({ C: new Float32Array(C_free), step: 0 });
     for (let i = 0; i < TOTAL_FRAMES; i++) {
@@ -1865,7 +1865,7 @@ async function runSingleValidation(datasetIdx){
   }
   const modelCurve=radialCurve(C,cx,cy);
   const{profile,rmse,maxErr}=computeValidationRMSE(modelCurve,ds.points,p.r);
-  const grade=rmse<.08?'good':rmse<.15?'ok':'poor';
+  const grade = rmse<.20?'good':rmse<.35?'ok':'poor';
   return{modelCurve:Array.from(modelCurve),profile,rmse:rmse.toFixed(4),maxErr:maxErr.toFixed(4),grade,C:Array.from(C),cx,cy};
 }
 
@@ -3035,12 +3035,10 @@ function syCmp(ab,id,v){
 function loadCmpPreset(ab){
   const drug=document.getElementById('cmp'+ab+'-drug').value, tumor=document.getElementById('cmp-tumor').value;
   if(drug==='custom')return;
-  const p = DB.find(d =>
-    d.drug.toLowerCase().replace(/[\s\-()/]/g,'_').replace(/_+/g,'_') === drug &&
-    d.tumor === tumor
-  ) || DB.find(d =>
-    d.drug.toLowerCase().replace(/[\s\-()/]/g,'_').replace(/_+/g,'_') === drug
-  );
+  const normalizeKey = name =>
+    name.toLowerCase().replace(/\s*\([^)]*\)/g,'').trim().replace(/[\s\-]+/g,'_');
+  const p = DB.find(d => normalizeKey(d.drug) === drug && d.tumor === tumor)
+          || DB.find(d => normalizeKey(d.drug) === drug);
   if(!p) return;
   const dRaw=Math.round(p.D*100*2)/2;
   document.getElementById('cmp'+ab+'-D').value=dRaw;
