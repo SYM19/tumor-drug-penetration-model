@@ -1856,7 +1856,7 @@ async function runValidation(){
 async function runSingleValidation(datasetIdx){
   const ds=VALIDATION_DATASETS[datasetIdx];
   const p=ds.params;
-  const cx=Math.floor(N/3), cy=N/2|0, dx=1/N, dt=.9*dx*dx/(4*p.D+1e-10);
+  const cx=N/2|0, cy=N/2|0, dx=1/N, dt=.9*dx*dx/(4*p.D+1e-10);
   const C=initC(p.mode,cx,cy,p.r),rho=buildRho(cx,cy,p.r,null),Df=buildDField(cx,cy,p.r,p.D);
   const CHUNKS=10,chunkSteps=Math.floor(p.steps/CHUNKS);
   for(let i=0;i<CHUNKS;i++){
