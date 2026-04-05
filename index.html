@@ -1661,7 +1661,10 @@ async function runSim(){
       animFrames.push({ C: new Float32Array(C_free), step: stepNum });
       document.getElementById('prog').style.width = ((i + 1) / TOTAL_FRAMES * 100).toFixed(0) + '%';
       document.getElementById('heat-lbl').textContent = `step ${stepNum} [2-compartment]`;
-      drawHeatmap('heatmap', C_free, cx, cy, p.r, 400, 400);
+      const _maxFree=C_free.reduce((a,b)=>a>b?a:b,0);
+      const _dispFree=_maxFree>0&&_maxFree<0.05?C_free.map(v=>v/_maxFree):C_free;
+      drawHeatmap('heatmap',_dispFree,cx,cy,p.r,400,400);
+      document.getElementById('heat-corner').textContent=_maxFree<0.05?`max C_free=${_maxFree.toFixed(4)} [auto-scaled]`:`max C_free=${_maxFree.toFixed(3)}`;
     }
     // Use C_free as the output C for metrics/results
     C.set(C_free);
@@ -1688,7 +1691,9 @@ async function runSim(){
   document.getElementById('m-max').textContent=metrics.maxC;
   document.getElementById('m-depth').textContent=metrics.depth50;
   document.getElementById('m-cov').textContent=metrics.coverage;
-  document.getElementById('status').textContent='Complete ✓ — animation ready';
+  const _finalMax=twoComp?C_free.reduce((a,b)=>a>b?a:b,0):Math.max(...Array.from(C).slice(0,100));
+  const _autoNote=twoComp&&_finalMax<0.05?` · C_free auto-scaled (max=${_finalMax.toFixed(4)}) — increase steps for larger values`:'';
+  document.getElementById('status').textContent='Complete ✓ — animation ready'+_autoNote;
   document.getElementById('heat-lbl').textContent=`done — ${p.steps} steps${useIFP?' [IFP]':''}`;
   simResult={C:Array.from(C),curve:Array.from(curve),metrics,p,Df:Array.from(Df),rho:Array.from(rho),vx:Array.from(vx),vy:Array.from(vy)};
   animParams={cx,cy,r:p.r,totalSteps:p.steps};
@@ -1724,7 +1729,9 @@ function renderAnimFrame(idx){
   if(!animFrames.length||!animParams) return;
   idx=Math.max(0,Math.min(idx,animFrames.length-1));animIdx=idx;
   const{C,step}=animFrames[idx];const{cx,cy,r,totalSteps}=animParams;
-  drawHeatmap('anim-heatmap',C,cx,cy,r,400,400);
+  const _mf=C.reduce((a,b)=>a>b?a:b,0);
+  const _dc=_mf>0&&_mf<0.05?C.map(v=>v/_mf):C;
+  drawHeatmap('anim-heatmap',_dc,cx,cy,r,400,400);
   const curve=radialCurve(C,cx,cy);drawCurve('anim-curve',curve,r,700,200);
   document.getElementById('anim-lbl').textContent=`step ${step}`;
   document.getElementById('anim-frame-badge').textContent=`frame ${idx+1} / ${animFrames.length}`;
@@ -3067,12 +3074,14 @@ async function runCompare(){
   document.getElementById('cmp-status').textContent='Running Drug A…';
   const pA=getCmpParams('A'),pB=getCmpParams('B');
   const cx=Math.floor(N/3),cy=N/2,dx=1/N;const CHUNKS=10;
-  const dtA=.9*dx*dx/(4*pA.D+1e-10);const CA=initC(pA.mode,cx,cy,pA.r);const rhoA=buildRho(cx,cy,pA.r,null);const DfA=buildDField(cx,cy,pA.r,pA.D);const chunkA=Math.floor(pA.steps/CHUNKS);
-  for(let i=0;i<CHUNKS;i++){await new Promise(r=>setTimeout(r,0));pdeChunk(CA,DfA,rhoA,dx,dtA,pA.lam,pA.k,1,chunkA,pA.mode);document.getElementById('cmp-prog').style.width=((i+1)/CHUNKS/2*100).toFixed(0)+'%';}
+  // Shared dt based on fastest drug — ensures both drugs simulate the same physical time
+  // so higher D produces more diffusion, making curves distinct
+  const dtShared=.9*dx*dx/(4*Math.max(pA.D,pB.D)+1e-10);
+  const CA=initC(pA.mode,cx,cy,pA.r);const rhoA=buildRho(cx,cy,pA.r,null);const DfA=buildDField(cx,cy,pA.r,pA.D);const chunkA=Math.floor(pA.steps/CHUNKS);
+  for(let i=0;i<CHUNKS;i++){await new Promise(r=>setTimeout(r,0));pdeChunk(CA,DfA,rhoA,dx,dtShared,pA.lam,pA.k,1,chunkA,pA.mode);document.getElementById('cmp-prog').style.width=((i+1)/CHUNKS/2*100).toFixed(0)+'%';}
   document.getElementById('cmp-status').textContent='Running Drug B…';
-  const dtB=.9*dx*dx/(4*pB.D+1e-10);const CB=initC(pB.mode,cx,cy,pB.r);const rhoB=buildRho(cx,cy,pB.r,null);const DfB=buildDField(cx,cy,pB.r,pB.D);const chunkB=Math.floor(pB.steps/CHUNKS);
-  for(let i=0;i<CHUNKS;i++){await new Promise(r=>setTimeout(r,0));pdeChunk(CB,DfB,rhoB,dx,dtB,pB.lam,pB.k,1,chunkB,pB.mode);document.getElementById('cmp-prog').style.width=(50+(i+1)/CHUNKS/2*100).toFixed(0)+'%';}
-  drawHeatmap('cmp-heatmap-A',CA,cx,cy,pA.r,400,400);drawHeatmap('cmp-heatmap-B',CB,cx,cy,pB.r,400,400);
+  const CB=initC(pB.mode,cx,cy,pB.r);const rhoB=buildRho(cx,cy,pB.r,null);const DfB=buildDField(cx,cy,pB.r,pB.D);const chunkB=Math.floor(pB.steps/CHUNKS);
+  for(let i=0;i<CHUNKS;i++){await new Promise(r=>setTimeout(r,0));pdeChunk(CB,DfB,rhoB,dx,dtShared,pB.lam,pB.k,1,chunkB,pB.mode);document.getElementById('cmp-prog').style.width=(50+(i+1)/CHUNKS/2*100).toFixed(0)+'%';}drawHeatmap('cmp-heatmap-A',CA,cx,cy,pA.r,400,400);drawHeatmap('cmp-heatmap-B',CB,cx,cy,pB.r,400,400);
   const mA=calcMetrics(CA,cx,cy,pA.r),mB=calcMetrics(CB,cx,cy,pB.r);
   const curveA=radialCurve(CA,cx,cy),curveB=radialCurve(CB,cx,cy);
   drawCompareCurves(curveA,curveB,pA.r);
